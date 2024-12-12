@@ -32,3 +32,8 @@ export const resourceType = [
     id: 7
   }
 ]
+
+export const sexMap = {
+  'M': '男',
+  'W': '女'
+}
