@@ -354,7 +354,6 @@ export default {
 
     resetForm() {
       this.dialogFormVisible = false
-      this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
         username: '',
         nickname: '',
