@@ -28,10 +28,21 @@
 
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
+        <el-table-column prop="createdAt" label="头像">
+          <template slot-scope="scope">
+            <img class="avatar-img" :src="scope.row.avatarURL">
+          </template>
+        </el-table-column>
         <el-table-column show-overflow-tooltip sortable prop="userID" label="ID" />
         <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
-        <el-table-column show-overflow-tooltip sortable prop="username" label="用户名" />
-        <el-table-column show-overflow-tooltip sortable prop="nickname" label="用户昵称" />
+        <el-table-column show-overflow-tooltip prop="username" label="用户名" />
+        <el-table-column show-overflow-tooltip prop="nickname" label="用户昵称" />
+        <el-table-column show-overflow-tooltip prop="birthday" label="生日" />
+        <el-table-column show-overflow-tooltip prop="sex" label="性别">
+          <template slot-scope="scope">
+            {{ sexMap[scope.row.sex] }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column show-overflow-tooltip sortable prop="password" label="密码" />
         <el-table-column show-overflow-tooltip sortable prop="email" label="邮箱" />
         <el-table-column show-overflow-tooltip sortable prop="phone" label="手机号" /> -->
@@ -68,6 +79,9 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item label="头像">
+            <img :src="dialogFormData.avatarURL" class="avatar-img">
+          </el-form-item>
           <el-form-item label="用户名" prop="username">
             <el-input v-model.trim="dialogFormData.username" :disabled="!!dialogFormData.ID" placeholder="用户名" />
           </el-form-item>
@@ -83,6 +97,13 @@
           <el-form-item v-if="!dialogFormData.ID" label="手机号" prop="phone">
             <el-input v-model.trim="dialogFormData.phone" placeholder="手机号" />
           </el-form-item>
+          <el-form-item v-if="dialogFormData.ID" label="性别">
+            <el-input :value="sexMap[dialogFormData.sex]" disabled />
+          </el-form-item>
+          <el-form-item v-if="dialogFormData.ID" label="生日">
+            <el-input :value="dialogFormData.birthday" disabled />
+          </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="cancelForm()">取 消</el-button>
@@ -97,11 +118,13 @@
 <script>
 import { getUserList, createUser, updateUser } from '@/api/business/user'
 import { getProjectList } from '@/api/business/project'
+import { sexMap } from '@/constant'
 
 export default {
   name: 'User',
   data() {
     return {
+      sexMap,
       // 查询参数
       params: {
         username: '',
@@ -278,12 +301,10 @@ export default {
 
     // 修改
     update(row) {
-      this.dialogFormData.ID = row.userID
-      this.dialogFormData.username = row.username
-      this.dialogFormData.nickname = row.nickname
-      this.dialogFormData.email = row.email
-      this.dialogFormData.password = row.password
-      this.dialogFormData.phone = row.phone
+      this.dialogFormData = {
+        ...row,
+        ID: row.userID
+      }
 
       this.dialogFormTitle = '修改用户'
       this.dialogType = 'update'
@@ -333,7 +354,6 @@ export default {
 
     resetForm() {
       this.dialogFormVisible = false
-      this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
         username: '',
         nickname: '',
@@ -365,6 +385,12 @@ export default {
 <style scoped>
   .container-card{
     margin: 10px;
+  }
+
+  .avatar-img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
   }
 
   .delete-popover{
