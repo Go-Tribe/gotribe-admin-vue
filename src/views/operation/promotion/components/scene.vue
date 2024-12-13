@@ -27,6 +27,8 @@
       <el-table-column show-overflow-tooltip prop="adSceneID" label="ID" width="150" />
       <el-table-column show-overflow-tooltip sortable prop="title" label="推广场景名称" />
       <el-table-column show-overflow-tooltip sortable prop="description" label="推广场景描述" />
+      <el-table-column show-overflow-tooltip sortable prop="projectTitle" label="所属项目" />
+      <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
       <el-table-column fixed="right" label="操作" align="center" width="120">
         <template slot-scope="scope">
           <el-tooltip content="编辑" effect="dark" placement="top">
@@ -122,6 +124,9 @@ export default {
         ],
         description: [
           { max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+        ],
+        projectID: [
+          { required: true, message: '请选择项目', trigger: 'blur' }
         ]
       },
 
@@ -198,11 +203,6 @@ export default {
             type: 'success'
           })
         } else {
-          this.$message({
-            showClose: true,
-            message: '表单校验失败',
-            type: 'error'
-          })
           return false
         }
       })
