@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="container-card" shadow="always">
+    <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="ID">
           <el-input v-model.trim="params.userID" clearable placeholder="ID" @clear="search" />
@@ -380,17 +380,9 @@ export default {
 </script>
 
 <style scoped>
-  .container-card{
-    margin: 10px;
-  }
-
   .avatar-img {
     height: 40px;
     width: 40px;
     border-radius: 50%;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
   }
 </style>

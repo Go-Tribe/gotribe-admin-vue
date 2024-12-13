@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="container-card" shadow="always">
+    <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="角色名称">
           <el-input v-model.trim="params.name" clearable placeholder="角色名称" @clear="search" />
@@ -492,10 +492,6 @@ export default {
 </script>
 
 <style scoped >
-  .container-card{
-    margin: 10px;
-  }
-
   .role-menu{
     font-size: 15px;
   }

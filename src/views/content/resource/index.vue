@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="container-card" shadow="always">
+    <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="资源类型">
           <el-select v-model="params.type">
@@ -277,14 +277,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .container-card{
-    margin: 10px;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
-  }
-
   .resource-list {
     display: flex;
     flex-wrap: wrap;

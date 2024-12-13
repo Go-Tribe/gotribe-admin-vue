@@ -3,7 +3,7 @@
     <Transition name="fade">
       <Create v-if="isCreate" :id="curId" :options-map="optionsMap" @submit="submit" />
     </Transition>
-    <el-card v-show="!isCreate" class="container-card" shadow="always">
+    <el-card v-show="!isCreate" class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="配置名称">
           <el-input v-model.trim="params.title" clearable placeholder="配置名称" @clear="search" />
@@ -32,7 +32,7 @@
             <el-tooltip content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
-            <el-tooltip class="delete-popover" content="删除" effect="dark" placement="top">
+            <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
               <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.configID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
@@ -217,13 +217,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .container-card{
-    margin: 10px;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
-  }
-</style>

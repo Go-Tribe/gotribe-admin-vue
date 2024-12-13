@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card class="container-card" shadow="always">
+    <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="项目名称">
           <el-input v-model.trim="params.title" clearable placeholder="项目名称" @clear="search" />
@@ -46,7 +46,7 @@
             <el-tooltip content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
-            <el-tooltip class="delete-popover" content="删除" effect="dark" placement="top">
+            <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
               <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.projectID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
@@ -354,13 +354,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .container-card{
-    margin: 10px;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
-  }
-</style>

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-card class="container-card" shadow="always">
+  <el-tabs type="border-card" class="m-10">
+    <el-tab-pane label="推广场景">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
         <el-form-item label="推广场景名称">
           <el-input v-model.trim="params.title" clearable placeholder="推广场景名称" @clear="search" />
@@ -29,7 +29,7 @@
             <el-tooltip content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
-            <el-tooltip class="delete-popover" content="删除" effect="dark" placement="top">
+            <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
               <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.adSceneID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
@@ -49,34 +49,35 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
+    </el-tab-pane>
+    <el-tab-pane label="推广内容">推广内容</el-tab-pane>
 
-      <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" @close="resetForm">
-        <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
-          <el-form-item label="推广场景名称" prop="title">
-            <el-input v-model.trim="dialogFormData.title" placeholder="推广场景名称" />
-          </el-form-item>
-          <el-form-item label="推广场景描述" prop="description">
-            <el-input v-model.trim="dialogFormData.description" placeholder="推广场景描述" />
-          </el-form-item>
-          <el-form-item label="项目" prop="projectID">
-            <el-select v-model="dialogFormData.projectID" placeholder="请选择项目" class="w-100">
-              <el-option
-                v-for="item in optionsMap.projectList"
-                :key="item.projectID"
-                :label="item.title"
-                :value="item.projectID"
-              />
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button size="mini" @click="cancelForm()">取 消</el-button>
-          <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
-        </div>
-      </el-dialog>
+    <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" @close="resetForm">
+      <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
+        <el-form-item label="推广场景名称" prop="title">
+          <el-input v-model.trim="dialogFormData.title" placeholder="推广场景名称" />
+        </el-form-item>
+        <el-form-item label="推广场景描述" prop="description">
+          <el-input v-model.trim="dialogFormData.description" placeholder="推广场景描述" />
+        </el-form-item>
+        <el-form-item label="项目" prop="projectID">
+          <el-select v-model="dialogFormData.projectID" placeholder="请选择项目" class="w-100">
+            <el-option
+              v-for="item in optionsMap.projectList"
+              :key="item.projectID"
+              :label="item.title"
+              :value="item.projectID"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="cancelForm()">取 消</el-button>
+        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
+      </div>
+    </el-dialog>
 
-    </el-card>
-  </div>
+  </el-tabs>
 </template>
 
 <script>
@@ -301,13 +302,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .container-card{
-    margin: 10px;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
-  }
-</style>
