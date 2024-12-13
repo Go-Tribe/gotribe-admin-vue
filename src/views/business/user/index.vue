@@ -5,9 +5,6 @@
         <el-form-item label="ID">
           <el-input v-model.trim="params.userID" clearable placeholder="ID" @clear="search" />
         </el-form-item>
-        <el-form-item label="ID">
-          <el-input v-model.trim="params.userID" clearable placeholder="ID" @clear="search" />
-        </el-form-item>
         <el-form-item label="项目">
           <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
             <el-option
