@@ -2,8 +2,21 @@
   <div>
     <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <el-form-item label="ID">
-          <el-input v-model.trim="params.id" clearable placeholder="ID" @clear="search" />
+        <el-form-item label="用户ID">
+          <el-input v-model.trim="params.userID" clearable placeholder="用户ID" @clear="search" />
+        </el-form-item>
+        <el-form-item label="用户昵称">
+          <el-input v-model.trim="params.nickname" clearable placeholder="用户昵称" @clear="search" />
+        </el-form-item>
+        <el-form-item label="项目">
+          <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
+            <el-option
+              v-for="item in projectList"
+              :key="item.projectID"
+              :label="item.title"
+              :value="item.projectID"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
@@ -15,9 +28,11 @@
 
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
         <el-table-column show-overflow-tooltip prop="id" label="ID" width="150" />
-        <el-table-column show-overflow-tooltip prop="nickname" label="用户" />
+        <el-table-column show-overflow-tooltip prop="userID" label="用户ID" />
+        <el-table-column show-overflow-tooltip prop="nickname" label="用户昵称" />
         <el-table-column show-overflow-tooltip prop="point" label="积分变化" />
-        <el-table-column show-overflow-tooltip prop="reason" label="变化理由" />
+        <el-table-column show-overflow-tooltip prop="reason" label="来源" />
+        <el-table-column show-overflow-tooltip prop="createdAt" label="创建时间" />
       </el-table>
 
       <el-pagination
@@ -89,7 +104,9 @@ export default {
     return {
       // 查询参数
       params: {
-        id: '',
+        userID: '',
+        nickname: '',
+        projectID: '',
         pageNum: 1,
         pageSize: 10
       },
