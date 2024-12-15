@@ -46,10 +46,15 @@
         </template>
       </el-table-column>
       <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
-      <el-table-column fixed="right" label="操作" align="center" width="120">
+      <el-table-column fixed="right" label="操作" align="center" width="180">
         <template slot-scope="scope">
           <el-tooltip content="编辑" effect="dark" placement="top">
             <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
+          </el-tooltip>
+          <el-tooltip class="ml-10" content="发布" effect="dark" placement="top">
+            <el-popconfirm title="确定发布吗？" @onConfirm="publishAdvertise(scope.row)">
+              <el-button slot="reference" :disabled="scope.row.status === 2" size="mini" icon="el-icon-turn-off" circle type="primary" />
+            </el-popconfirm>
           </el-tooltip>
           <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
             <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.adID)">
@@ -236,10 +241,7 @@ export default {
 
     // 修改
     update(row) {
-      this.dialogFormData = {
-        ...row,
-        ID: row.adID
-      }
+      this.dialogFormData = row
 
       this.dialogFormTitle = '修改推广内容'
       this.dialogType = 'update'
@@ -254,13 +256,9 @@ export default {
           let msg = ''
           this.submitLoading = true
           try {
-            if (this.dialogType === 'create') {
-              const { message } = await createAd(this.dialogFormData)
-              msg = message
-            } else {
-              const { message } = await updateAd(this.dialogFormData.ID, this.dialogFormData)
-              msg = message
-            }
+            const apiMethod = this.dialogType === 'create' ? createAd : updateAd
+            const { message } = await apiMethod(this.dialogFormData)
+            msg = message
           } finally {
             this.submitLoading = false
           }
@@ -275,6 +273,28 @@ export default {
         } else {
           return false
         }
+      })
+    },
+
+    // 发布
+    async publishAdvertise(row) {
+      this.loading = true
+      let msg = ''
+      try {
+        const { message } = await updateAd({
+          ...row,
+          status: 2
+        })
+        msg = message
+      } finally {
+        this.loading = false
+      }
+
+      this.getTableData()
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: 'success'
       })
     },
 

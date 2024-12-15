@@ -174,10 +174,7 @@ export default {
 
     // 修改
     update(row) {
-      this.dialogFormData = {
-        ...row,
-        ID: row.adSceneID
-      }
+      this.dialogFormData = row
 
       this.dialogFormTitle = '修改推广场景'
       this.dialogType = 'update'
@@ -191,13 +188,9 @@ export default {
           let msg = ''
           this.submitLoading = true
           try {
-            if (this.dialogType === 'create') {
-              const { message } = await createScene(this.dialogFormData)
-              msg = message
-            } else {
-              const { message } = await updateScene(this.dialogFormData.ID, this.dialogFormData)
-              msg = message
-            }
+            const apiMethod = this.dialogType === 'create' ? createScene : updateScene
+            const { message } = await apiMethod(this.dialogFormData)
+            msg = message
           } finally {
             this.submitLoading = false
           }

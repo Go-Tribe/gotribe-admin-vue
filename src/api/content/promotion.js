@@ -19,9 +19,9 @@ export function createScene(data) {
 }
 
 // 更新推广场景
-export function updateScene(Id, data) {
+export function updateScene(data) {
   return request({
-    url: '/api/ad/scene/' + Id,
+    url: '/api/ad/scene/' + data.adSceneID,
     method: 'patch',
     data
   })
@@ -55,9 +55,9 @@ export function createAd(data) {
 }
 
 // 更新推广内容
-export function updateAd(Id, data) {
+export function updateAd(data) {
   return request({
-    url: '/api/ad/' + Id,
+    url: '/api/ad/' + data.adID,
     method: 'patch',
     data
   })
