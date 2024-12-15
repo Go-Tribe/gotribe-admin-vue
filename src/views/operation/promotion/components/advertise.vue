@@ -6,6 +6,7 @@
           v-model="params.sceneID"
           placeholder="请选择推广场景"
           clearable
+          @clear="search"
         >
           <el-option
             v-for="item in sceneList"
@@ -20,6 +21,7 @@
           v-model="params.status"
           placeholder="请选择发布状态"
           clearable
+          @clear="search"
         >
           <el-option label="已发布" :value="publishStatusEnum.published" />
           <el-option label="未发布" :value="publishStatusEnum.unPublished" />

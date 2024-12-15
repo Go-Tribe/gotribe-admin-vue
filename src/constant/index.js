@@ -69,3 +69,8 @@ export const publishStatusEnum = {
   unPublished: 1,
   published: 2
 }
+
+export const objectTypeEnum = {
+  article: 1,
+  goods: 2
+}

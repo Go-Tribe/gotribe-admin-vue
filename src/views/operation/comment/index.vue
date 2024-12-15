@@ -15,6 +15,28 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select
+            v-model="params.status"
+            placeholder="请选择审核状态"
+            clearable
+            @clear="search"
+          >
+            <el-option label="已通过" :value="publishStatusEnum.published" />
+            <el-option label="待审核" :value="publishStatusEnum.unPublished" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="评论对象类型">
+          <el-select
+            v-model="params.object_type"
+            placeholder="请选择审核状态"
+            clearable
+            @clear="search"
+          >
+            <el-option label="文章" :value="objectTypeEnum.article" />
+            <el-option label="商品" :value="objectTypeEnum.goods" />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
         </el-form-item>
@@ -82,17 +104,20 @@
 <script>
 import { getCommentList, updateComment } from '@/api/operation/comment'
 import { getProjectList } from '@/api/business/project'
-import { publishStatusEnum } from '@/constant'
+import { publishStatusEnum, objectTypeEnum } from '@/constant'
 
 export default {
   name: 'Comment',
   data() {
     return {
       publishStatusEnum,
+      objectTypeEnum,
       // 查询参数
       params: {
         nickname: '',
         projectID: '',
+        status: '',
+        object_type: '',
         pageNum: 1,
         pageSize: 10
       },
