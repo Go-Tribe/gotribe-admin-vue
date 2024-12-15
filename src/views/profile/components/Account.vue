@@ -125,11 +125,6 @@ export default {
             })
           }, 1500)
         } else {
-          this.$message({
-            showClose: true,
-            message: '表单校验失败',
-            type: 'error'
-          })
           return false
         }
       })
