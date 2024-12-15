@@ -38,23 +38,34 @@ export const sexMap = {
   'F': '女'
 }
 
+export const urlTypeEnum = {
+  link: 1,
+  article: 2,
+  goods: 3
+}
+
 export const urlTypeMap = {
-  '1': '链接',
-  '2': '文章',
-  '3': '商品'
+  [urlTypeEnum.link]: '链接',
+  [urlTypeEnum.article]: '文章',
+  [urlTypeEnum.goods]: '商品'
 }
 
 export const urlTypeOptions = [
   {
-    id: 1,
+    id: urlTypeEnum.link,
     type: '链接'
   },
   {
-    id: 2,
+    id: urlTypeEnum.article,
     type: '文章'
   },
   {
-    id: 3,
+    id: urlTypeEnum.goods,
     type: '商品'
   }
 ]
+
+export const publishStatusEnum = {
+  unPublished: 1,
+  published: 2
+}

@@ -138,11 +138,16 @@
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="dialogFormData.sort" controls-position="right" :min="1" />
         </el-form-item>
+        <el-form-item label="是否发布" prop="status">
+          <el-radio-group v-model="dialogFormData.status">
+            <el-radio :label="publishStatusEnum.published">是</el-radio>
+            <el-radio :label="publishStatusEnum.unPublished">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="cancelForm()">取 消</el-button>
         <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(1)">保 存</el-button>
-        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(2)">保存并发布</el-button>
       </div>
     </el-dialog>
 
@@ -151,7 +156,7 @@
 
 <script>
 import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/operation/promotion'
-import { urlTypeOptions, urlTypeMap } from '@/constant'
+import { urlTypeOptions, urlTypeMap, publishStatusEnum, urlTypeEnum } from '@/constant'
 import ResourceSelect from '@/components/ResourceSelect'
 import { validateURL } from '@/utils/formValidate'
 
@@ -164,6 +169,7 @@ export default {
     return {
       urlTypeOptions,
       urlTypeMap,
+      publishStatusEnum,
       // 查询参数
       params: {
         pageNum: 1,
@@ -185,9 +191,10 @@ export default {
         description: '',
         sceneID: '',
         url: '',
-        urlType: 1,
+        urlType: urlTypeEnum.link,
         image: '',
-        sort: 1
+        sort: 1,
+        status: publishStatusEnum.published
       },
       dialogFormRules: {
         title: [
@@ -202,17 +209,20 @@ export default {
           { required: true, message: '请选择推广场景', trigger: 'blur' }
         ],
         url: [
-          { required: true, message: '请填写外链', trigger: 'blur' },
+          { required: true, message: '请填写链接', trigger: 'blur' },
           { validator: validateURL, message: '请填写正确的链接地址', trigger: 'blur' }
         ],
         urlType: [
-          { required: true, message: '请选择链接内容', trigger: 'blur' }
+          { required: true, message: '请选择类型', trigger: 'blur' }
         ],
         image: [
           { required: true, message: '请填写图片链接', trigger: 'blur' }
         ],
         sort: [
           { required: true, message: '请填写排序', trigger: 'blur' }
+        ],
+        status: [
+          { required: true, message: '请选择发布状态', trigger: 'blur' }
         ]
       },
 
@@ -271,8 +281,7 @@ export default {
     },
 
     // 提交表单
-    submitForm(status) {
-      this.dialogFormData.status = status
+    submitForm() {
       this.$refs['dialogForm'].validate(async valid => {
         if (valid) {
           let msg = ''
@@ -333,9 +342,10 @@ export default {
         description: '',
         sceneID: '',
         url: '',
-        urlType: 1,
+        urlType: urlTypeEnum.link,
         image: '',
-        sort: 1
+        sort: 1,
+        status: publishStatusEnum.published
       }
     },
 

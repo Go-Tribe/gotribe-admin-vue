@@ -34,7 +34,7 @@
         <el-table-column fixed="right" label="操作" align="center" width="120">
           <template slot-scope="scope">
             <el-tooltip content="审核" effect="dark" placement="top">
-              <el-popconfirm title="确定审核通过吗？" @onConfirm="updateCommentStatus(scope.row, 2)">
+              <el-popconfirm title="确定审核通过吗？" @onConfirm="updateCommentStatus(scope.row, publishStatusEnum.published)">
                 <el-button
                   v-show="scope.row.status === 1"
                   slot="reference"
@@ -47,7 +47,7 @@
               </el-popconfirm>
             </el-tooltip>
             <el-tooltip content="下线" effect="dark" placement="top">
-              <el-popconfirm title="确定下线吗？" @onConfirm="updateCommentStatus(scope.row, 1)">
+              <el-popconfirm title="确定下线吗？" @onConfirm="updateCommentStatus(scope.row, publishStatusEnum.unPublished)">
                 <el-button
                   v-show="scope.row.status === 2"
                   slot="reference"
@@ -82,11 +82,13 @@
 <script>
 import { getCommentList, updateComment } from '@/api/operation/comment'
 import { getProjectList } from '@/api/business/project'
+import { publishStatusEnum } from '@/constant'
 
 export default {
   name: 'Comment',
   data() {
     return {
+      publishStatusEnum,
       // 查询参数
       params: {
         nickname: '',
