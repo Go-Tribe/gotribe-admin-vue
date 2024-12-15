@@ -35,3 +35,39 @@ export function batchDeleteScene(data) {
     data
   })
 }
+
+// 获取推广内容列表
+export function getAdList(params) {
+  return request({
+    url: '/api/ad',
+    method: 'get',
+    params
+  })
+}
+
+// 创建推广内容
+export function createAd(data) {
+  return request({
+    url: '/api/ad',
+    method: 'post',
+    data
+  })
+}
+
+// 更新推广内容
+export function updateAd(Id, data) {
+  return request({
+    url: '/api/ad/' + Id,
+    method: 'patch',
+    data
+  })
+}
+
+// 批量删除推广内容
+export function batchDeleteAd(data) {
+  return request({
+    url: '/api/ad',
+    method: 'delete',
+    data
+  })
+}

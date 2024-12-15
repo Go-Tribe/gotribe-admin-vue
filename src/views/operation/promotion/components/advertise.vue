@@ -1,13 +1,17 @@
 <template>
   <div>
     <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-      <el-form-item label="项目">
-        <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
+      <el-form-item label="推广场景">
+        <el-select
+          v-model="params.sceneID"
+          placeholder="请选择推广场景"
+          clearable
+        >
           <el-option
-            v-for="item in projectList"
-            :key="item.projectID"
+            v-for="item in sceneList"
+            :key="item.adSceneID"
             :label="item.title"
-            :value="item.projectID"
+            :value="item.adSceneID"
           />
         </el-select>
       </el-form-item>
@@ -24,10 +28,23 @@
 
     <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column show-overflow-tooltip prop="adSceneID" label="ID" width="150" />
-      <el-table-column show-overflow-tooltip sortable prop="title" label="推广场景名称" />
-      <el-table-column show-overflow-tooltip sortable prop="description" label="推广场景描述" />
-      <el-table-column show-overflow-tooltip sortable prop="projectTitle" label="所属项目" />
+      <el-table-column show-overflow-tooltip prop="adID" label="ID" width="150" />
+      <el-table-column show-overflow-tooltip prop="title" label="推广内容名称" />
+      <el-table-column show-overflow-tooltip prop="description" label="推广内容描述" />
+      <el-table-column label="图片">
+        <template slot-scope="scope">
+          <img class="cover-img" :src="scope.row.image">
+        </template>
+      </el-table-column>
+      <el-table-column show-overflow-tooltip prop="SceneTitle" label="推广场景" />
+      <el-table-column show-overflow-tooltip prop="url" label="外链" />
+      <el-table-column show-overflow-tooltip sortable prop="sort" label="排序" />
+      <el-table-column label="发布状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 2" type="success">已发布</el-tag>
+          <el-tag v-if="scope.row.status === 1" type="info">未发布</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
       <el-table-column fixed="right" label="操作" align="center" width="120">
         <template slot-scope="scope">
@@ -35,7 +52,7 @@
             <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
           </el-tooltip>
           <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
-            <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.adSceneID)">
+            <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.adID)">
               <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
             </el-popconfirm>
           </el-tooltip>
@@ -57,26 +74,49 @@
 
     <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" @close="resetForm">
       <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
-        <el-form-item label="推广场景名称" prop="title">
-          <el-input v-model.trim="dialogFormData.title" placeholder="推广场景名称" />
+        <el-form-item label="推广内容名称" prop="title">
+          <el-input v-model.trim="dialogFormData.title" placeholder="推广内容名称" />
         </el-form-item>
-        <el-form-item label="推广场景描述" prop="description">
-          <el-input v-model.trim="dialogFormData.description" placeholder="推广场景描述" />
+        <el-form-item label="推广内容描述" prop="description">
+          <el-input v-model.trim="dialogFormData.description" placeholder="推广内容描述" />
         </el-form-item>
-        <el-form-item label="项目" prop="projectID">
-          <el-select v-model="dialogFormData.projectID" placeholder="请选择项目" class="w-100">
+        <el-form-item label="推广场景" prop="sceneID">
+          <el-select
+            v-model="dialogFormData.sceneID"
+            placeholder="请选择推广场景"
+            class="w-100"
+          >
             <el-option
-              v-for="item in projectList"
-              :key="item.projectID"
+              v-for="item in sceneList"
+              :key="item.adSceneID"
               :label="item.title"
-              :value="item.projectID"
+              :value="item.adSceneID"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="外链" prop="url">
+          <el-input v-model.trim="dialogFormData.url" placeholder="外链" />
+        </el-form-item>
+        <el-form-item label="链接内容" prop="urlType">
+          <el-radio-group v-model="dialogFormData.urlType">
+            <el-radio
+              v-for="item in urlTypeOptions"
+              :key="item.id"
+              :label="item.id"
+            >{{ item.type }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="图片" prop="image">
+          <ResourceSelect v-model="dialogFormData.image" />
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input-number v-model="dialogFormData.sort" controls-position="right" :min="1" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="cancelForm()">取 消</el-button>
-        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
+        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(1)">发 布</el-button>
+        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(2)">保存并发布</el-button>
       </div>
     </el-dialog>
 
@@ -84,18 +124,24 @@
 </template>
 
 <script>
-import { getSceneList, createScene, updateScene, batchDeleteScene } from '@/api/content/promotion'
-import { getProjectList } from '@/api/business/project'
+import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/content/promotion'
+import { urlTypeOptions } from '@/constant'
+import ResourceSelect from '@/components/ResourceSelect'
+import { validateURL } from '@/utils/formValidate'
 
 export default {
-  name: 'Scene',
+  name: 'Advertise',
+  components: {
+    ResourceSelect
+  },
   data() {
     return {
+      urlTypeOptions,
       // 查询参数
       params: {
-        projectID: '',
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        sceneID: ''
       },
       // 表格数据
       tableData: [],
@@ -110,18 +156,36 @@ export default {
       dialogFormData: {
         title: '',
         description: '',
-        projectID: ''
+        sceneID: '',
+        url: '',
+        urlType: 1,
+        image: '',
+        sort: 1
       },
       dialogFormRules: {
         title: [
-          { required: true, message: '请输入推广场景名称', trigger: 'blur' },
+          { required: true, message: '请输入推广内容名称', trigger: 'blur' },
           { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
         ],
         description: [
+          { required: true, message: '请输入推广内容描述', trigger: 'blur' },
           { max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
-        projectID: [
-          { required: true, message: '请选择项目', trigger: 'blur' }
+        sceneID: [
+          { required: true, message: '请选择推广场景', trigger: 'blur' }
+        ],
+        url: [
+          { required: true, message: '请填写外链', trigger: 'blur' },
+          { validator: validateURL, message: '请填写正确的链接地址', trigger: 'blur' }
+        ],
+        urlType: [
+          { required: true, message: '请选择链接内容', trigger: 'blur' }
+        ],
+        image: [
+          { required: true, message: '请填写图片链接', trigger: 'blur' }
+        ],
+        sort: [
+          { required: true, message: '请填写排序', trigger: 'blur' }
         ]
       },
 
@@ -129,23 +193,21 @@ export default {
       popoverVisible: false,
       // 表格多选
       multipleSelection: [],
-      projectList: []
+      sceneList: []
     }
   },
   created() {
     this.getTableData()
-    this.getProjectData()
+    this.getSceneData()
   },
   methods: {
-    async getProjectData() {
+    async getSceneData() {
       const params = {
-        title: '',
-        description: '',
         pageNum: 1,
         pageSize: 50
       }
-      const { data } = await getProjectList(params)
-      this.projectList = data.projects
+      const { data } = await getSceneList(params)
+      this.sceneList = data.adScenes
     },
     // 查询
     search() {
@@ -157,8 +219,8 @@ export default {
     async getTableData() {
       this.loading = true
       try {
-        const { data } = await getSceneList(this.params)
-        this.tableData = data.adScenes || []
+        const { data } = await getAdList(this.params)
+        this.tableData = data.ads || []
         this.total = data.total
       } finally {
         this.loading = false
@@ -167,7 +229,7 @@ export default {
 
     // 新增
     create() {
-      this.dialogFormTitle = '新增推广场景'
+      this.dialogFormTitle = '新增推广内容'
       this.dialogType = 'create'
       this.dialogFormVisible = true
     },
@@ -176,26 +238,27 @@ export default {
     update(row) {
       this.dialogFormData = {
         ...row,
-        ID: row.adSceneID
+        ID: row.adID
       }
 
-      this.dialogFormTitle = '修改推广场景'
+      this.dialogFormTitle = '修改推广内容'
       this.dialogType = 'update'
       this.dialogFormVisible = true
     },
 
     // 提交表单
-    submitForm() {
+    submitForm(status) {
+      this.dialogFormData.status = status
       this.$refs['dialogForm'].validate(async valid => {
         if (valid) {
           let msg = ''
           this.submitLoading = true
           try {
             if (this.dialogType === 'create') {
-              const { message } = await createScene(this.dialogFormData)
+              const { message } = await createAd(this.dialogFormData)
               msg = message
             } else {
-              const { message } = await updateScene(this.dialogFormData.ID, this.dialogFormData)
+              const { message } = await updateAd(this.dialogFormData.ID, this.dialogFormData)
               msg = message
             }
           } finally {
@@ -225,7 +288,12 @@ export default {
       this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
         title: '',
-        description: ''
+        description: '',
+        sceneID: '',
+        url: '',
+        urlType: 1,
+        image: '',
+        sort: 1
       }
     },
 
@@ -237,13 +305,13 @@ export default {
         type: 'warning'
       }).then(async res => {
         this.loading = true
-        const adSceneIds = []
+        const adIds = []
         this.multipleSelection.forEach(x => {
-          adSceneIds.push(x.adSceneID)
+          adIds.push(x.adID)
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteScene({ adScenesIds: adSceneIds.join(',') })
+          const { message } = await batchDeleteAd({ adsIds: adIds.join(',') })
           msg = message
         } finally {
           this.loading = false
@@ -270,11 +338,11 @@ export default {
     },
 
     // 单个删除
-    async singleDelete(adSceneId) {
+    async singleDelete(adId) {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteScene({ adScenesIds: adSceneId })
+        const { message } = await batchDeleteAd({ adsIds: adId })
         msg = message
       } finally {
         this.loading = false
@@ -300,3 +368,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.cover-img {
+  height: 100px;
+  width: 100px;
+}
+</style>

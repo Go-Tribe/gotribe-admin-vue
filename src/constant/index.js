@@ -37,3 +37,24 @@ export const sexMap = {
   'M': '男',
   'F': '女'
 }
+
+export const urlTypeMap = {
+  '1': '链接',
+  '2': '文章',
+  '3': '商品'
+}
+
+export const urlTypeOptions = [
+  {
+    id: 1,
+    type: '链接'
+  },
+  {
+    id: 2,
+    type: '文章'
+  },
+  {
+    id: 3,
+    type: '商品'
+  }
+]
