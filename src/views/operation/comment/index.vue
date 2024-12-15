@@ -2,16 +2,25 @@
   <div>
     <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <el-form-item label="评论内容">
-          <el-input v-model.trim="params.comment" clearable placeholder="评论内容" @clear="search" />
+        <el-form-item label="评论人">
+          <el-input v-model.trim="params.nickname" clearable placeholder="评论人" @clear="search" />
+        </el-form-item>
+        <el-form-item label="项目">
+          <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
+            <el-option
+              v-for="item in projectList"
+              :key="item.projectID"
+              :label="item.title"
+              :value="item.projectID"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+      <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
         <el-table-column show-overflow-tooltip prop="commentID" label="ID" width="150" />
         <el-table-column show-overflow-tooltip prop="comment" label="评论内容" />
         <el-table-column show-overflow-tooltip prop="nickname" label="评论人" />
@@ -51,6 +60,7 @@
 
 <script>
 import { getCommentList, updateComment } from '@/api/operation/comment'
+import { getProjectList } from '@/api/business/project'
 
 export default {
   name: 'Comment',
@@ -58,7 +68,8 @@ export default {
     return {
       // 查询参数
       params: {
-        comment: '',
+        nickname: '',
+        projectID: '',
         pageNum: 1,
         pageSize: 10
       },
@@ -68,13 +79,23 @@ export default {
       loading: false,
 
       // 删除按钮弹出框
-      popoverVisible: false
+      popoverVisible: false,
+      projectList: []
     }
   },
   created() {
     this.getTableData()
+    this.getProjectData()
   },
   methods: {
+    async getProjectData() {
+      const params = {
+        pageNum: 1,
+        pageSize: 50
+      }
+      const { data } = await getProjectList(params)
+      this.projectList = data.projects
+    },
     // 查询
     search() {
       this.params.pageNum = 1

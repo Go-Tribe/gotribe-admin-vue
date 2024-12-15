@@ -139,8 +139,6 @@ export default {
   methods: {
     async getProjectData() {
       const params = {
-        title: '',
-        description: '',
         pageNum: 1,
         pageSize: 50
       }
