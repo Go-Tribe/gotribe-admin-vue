@@ -33,9 +33,30 @@
         <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
         <el-table-column fixed="right" label="操作" align="center" width="120">
           <template slot-scope="scope">
-            <el-tooltip class="ml-10" content="审核" effect="dark" placement="top">
-              <el-popconfirm title="确定审核通过吗？" @onConfirm="auditComment(scope.row)">
-                <el-button slot="reference" :disabled="scope.row.status === 2" size="mini" icon="el-icon-turn-off" circle type="primary" />
+            <el-tooltip content="审核" effect="dark" placement="top">
+              <el-popconfirm title="确定审核通过吗？" @onConfirm="updateCommentStatus(scope.row, 2)">
+                <el-button
+                  v-show="scope.row.status === 1"
+                  slot="reference"
+                  class="ml-10"
+                  size="mini"
+                  icon="el-icon-turn-off"
+                  circle
+                  type="primary"
+                />
+              </el-popconfirm>
+            </el-tooltip>
+            <el-tooltip content="下线" effect="dark" placement="top">
+              <el-popconfirm title="确定下线吗？" @onConfirm="updateCommentStatus(scope.row, 1)">
+                <el-button
+                  v-show="scope.row.status === 2"
+                  slot="reference"
+                  class="ml-10"
+                  size="mini"
+                  icon="el-icon-turn-off"
+                  circle
+                  type="danger"
+                />
               </el-popconfirm>
             </el-tooltip>
           </template>
@@ -115,13 +136,13 @@ export default {
     },
 
     // 审核
-    async auditComment(row) {
+    async updateCommentStatus(row, status) {
       this.loading = true
       let msg = ''
       try {
         const { message } = await updateComment({
           ...row,
-          status: 2
+          status
         })
         msg = message
       } finally {
