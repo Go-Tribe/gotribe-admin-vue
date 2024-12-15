@@ -120,7 +120,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="链接内容" prop="urlType">
+        <el-form-item label="类型" prop="urlType">
           <el-radio-group v-model="dialogFormData.urlType">
             <el-radio
               v-for="item in urlTypeOptions"
