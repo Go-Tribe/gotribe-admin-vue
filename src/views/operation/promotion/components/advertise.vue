@@ -15,6 +15,19 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="发布状态">
+        <el-select
+          v-model="params.status"
+          placeholder="请选择发布状态"
+          clearable
+        >
+          <el-option label="已发布" :value="publishStatusEnum.published" />
+          <el-option label="未发布" :value="publishStatusEnum.unPublished" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="推广内容名称">
+        <el-input v-model.trim="params.title" clearable placeholder="推广内容名称" @clear="search" />
+      </el-form-item>
       <el-form-item>
         <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
       </el-form-item>
@@ -174,7 +187,9 @@ export default {
       params: {
         pageNum: 1,
         pageSize: 10,
-        sceneID: ''
+        sceneID: '',
+        status: '',
+        title: ''
       },
       // 表格数据
       tableData: [],
