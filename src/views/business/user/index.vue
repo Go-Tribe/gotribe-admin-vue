@@ -34,6 +34,7 @@
         <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
         <el-table-column show-overflow-tooltip prop="username" label="用户名" />
         <el-table-column show-overflow-tooltip prop="nickname" label="用户昵称" />
+        <el-table-column show-overflow-tooltip prop="point" label="积分" />
         <el-table-column show-overflow-tooltip prop="birthday" label="生日" />
         <el-table-column show-overflow-tooltip prop="sex" label="性别">
           <template slot-scope="scope">
