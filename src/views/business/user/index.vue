@@ -1,10 +1,7 @@
 <template>
   <div>
-    <el-card class="container-card" shadow="always">
+    <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <el-form-item label="ID">
-          <el-input v-model.trim="params.userID" clearable placeholder="ID" @clear="search" />
-        </el-form-item>
         <el-form-item label="ID">
           <el-input v-model.trim="params.userID" clearable placeholder="ID" @clear="search" />
         </el-form-item>
@@ -37,6 +34,7 @@
         <el-table-column show-overflow-tooltip sortable prop="createdAt" label="创建时间" />
         <el-table-column show-overflow-tooltip prop="username" label="用户名" />
         <el-table-column show-overflow-tooltip prop="nickname" label="用户昵称" />
+        <el-table-column show-overflow-tooltip prop="point" label="积分" />
         <el-table-column show-overflow-tooltip prop="birthday" label="生日" />
         <el-table-column show-overflow-tooltip prop="sex" label="性别">
           <template slot-scope="scope">
@@ -337,11 +335,6 @@ export default {
             type: 'success'
           })
         } else {
-          // this.$message({
-          //   showClose: true,
-          //   message: '表单校验失败',
-          //   type: 'error'
-          // })
           return false
         }
       })
@@ -383,17 +376,9 @@ export default {
 </script>
 
 <style scoped>
-  .container-card{
-    margin: 10px;
-  }
-
   .avatar-img {
     height: 40px;
     width: 40px;
     border-radius: 50%;
-  }
-
-  .delete-popover{
-    margin-left: 10px;
   }
 </style>
