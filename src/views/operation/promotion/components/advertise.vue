@@ -54,8 +54,8 @@
           <el-tooltip content="发布" effect="dark" placement="top">
             <el-popconfirm title="确定发布吗？" @onConfirm="updateAdStatus(scope.row, 2)">
               <el-button
+                v-show="scope.row.status === 1"
                 slot="reference"
-                :disabled="scope.row.status === 2"
                 class="ml-10"
                 size="mini"
                 icon="el-icon-turn-off"
@@ -64,7 +64,7 @@
               />
             </el-popconfirm>
           </el-tooltip>
-          <!-- <el-tooltip content="下线" effect="dark" placement="top">
+          <el-tooltip content="下线" effect="dark" placement="top">
             <el-popconfirm title="确定下线吗？" @onConfirm="updateAdStatus(scope.row, 1)">
               <el-button
                 v-show="scope.row.status === 2"
@@ -76,7 +76,7 @@
                 type="danger"
               />
             </el-popconfirm>
-          </el-tooltip> -->
+          </el-tooltip>
           <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
             <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.adID)">
               <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
