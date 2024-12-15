@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/content/promotion'
+import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/operation/promotion'
 import { urlTypeOptions } from '@/constant'
 import ResourceSelect from '@/components/ResourceSelect'
 import { validateURL } from '@/utils/formValidate'

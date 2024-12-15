@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { getCommentList, updateComment } from '@/api/content/comment'
+import { getCommentList, updateComment } from '@/api/operation/comment'
 
 export default {
   name: 'Comment',

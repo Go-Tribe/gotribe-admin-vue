@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { getSceneList, createScene, updateScene, batchDeleteScene } from '@/api/content/promotion'
+import { getSceneList, createScene, updateScene, batchDeleteScene } from '@/api/operation/promotion'
 import { getProjectList } from '@/api/business/project'
 
 export default {
