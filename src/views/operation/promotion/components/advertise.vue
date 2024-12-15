@@ -120,9 +120,6 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="外链" prop="url">
-          <el-input v-model.trim="dialogFormData.url" placeholder="外链" />
-        </el-form-item>
         <el-form-item label="链接内容" prop="urlType">
           <el-radio-group v-model="dialogFormData.urlType">
             <el-radio
@@ -131,6 +128,9 @@
               :label="item.id"
             >{{ item.type }}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="urlTypeMap[dialogFormData.urlType]" prop="url">
+          <el-input v-model.trim="dialogFormData.url" :placeholder="urlTypeMap[dialogFormData.urlType]" />
         </el-form-item>
         <el-form-item label="图片" prop="image">
           <ResourceSelect v-model="dialogFormData.image" />
@@ -151,7 +151,7 @@
 
 <script>
 import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/operation/promotion'
-import { urlTypeOptions } from '@/constant'
+import { urlTypeOptions, urlTypeMap } from '@/constant'
 import ResourceSelect from '@/components/ResourceSelect'
 import { validateURL } from '@/utils/formValidate'
 
@@ -163,6 +163,7 @@ export default {
   data() {
     return {
       urlTypeOptions,
+      urlTypeMap,
       // 查询参数
       params: {
         pageNum: 1,
