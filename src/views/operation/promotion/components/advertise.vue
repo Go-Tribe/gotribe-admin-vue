@@ -51,9 +51,30 @@
           <el-tooltip content="编辑" effect="dark" placement="top">
             <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
           </el-tooltip>
-          <el-tooltip class="ml-10" content="发布" effect="dark" placement="top">
-            <el-popconfirm title="确定发布吗？" @onConfirm="publishAdvertise(scope.row)">
-              <el-button slot="reference" :disabled="scope.row.status === 2" size="mini" icon="el-icon-turn-off" circle type="primary" />
+          <el-tooltip content="发布" effect="dark" placement="top">
+            <el-popconfirm title="确定发布吗？" @onConfirm="updateAdStatus(scope.row, 2)">
+              <el-button
+                v-if="scope.row.status === 1"
+                slot="reference"
+                class="ml-10"
+                size="mini"
+                icon="el-icon-turn-off"
+                circle
+                type="primary"
+              />
+            </el-popconfirm>
+          </el-tooltip>
+          <el-tooltip content="下线" effect="dark" placement="top">
+            <el-popconfirm title="确定下线吗？" @onConfirm="updateAdStatus(scope.row, 1)">
+              <el-button
+                v-if="scope.row.status === 2"
+                slot="reference"
+                class="ml-10"
+                size="mini"
+                icon="el-icon-turn-off"
+                circle
+                type="danger"
+              />
             </el-popconfirm>
           </el-tooltip>
           <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
@@ -120,7 +141,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="cancelForm()">取 消</el-button>
-        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(1)">发 布</el-button>
+        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(1)">保 存</el-button>
         <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm(2)">保存并发布</el-button>
       </div>
     </el-dialog>
@@ -277,13 +298,13 @@ export default {
     },
 
     // 发布
-    async publishAdvertise(row) {
+    async updateAdStatus(row, status) {
       this.loading = true
       let msg = ''
       try {
         const { message } = await updateAd({
           ...row,
-          status: 2
+          status
         })
         msg = message
       } finally {
