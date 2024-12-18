@@ -10,9 +10,9 @@
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="categoryID" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="productCategoryID" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column show-overflow-tooltip prop="categoryID" label="ID" width="150" />
+        <el-table-column show-overflow-tooltip prop="productCategoryID" label="ID" width="150" />
         <el-table-column show-overflow-tooltip prop="title" label="分类名称" width="150" />
         <el-table-column show-overflow-tooltip prop="description" label="分类描述" />
         <el-table-column show-overflow-tooltip prop="icon" label="图标" />
@@ -29,7 +29,7 @@
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
             <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
-              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.categoryID)">
+              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productCategoryID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
             </el-tooltip>
@@ -107,7 +107,7 @@
 import ResourceSelect from '@/components/ResourceSelect'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { getCategoryTree, createCategory, updateCategory, batchDeleteCategory } from '@/api/content/category'
+import { getCategoryTree, createCategory, updateCategory, batchDeleteCategory } from '@/api/store/category'
 import { getProjectList } from '@/api/business/project'
 
 export default {
@@ -138,7 +138,7 @@ export default {
         sort: 999,
         hidden: '否',
         parentId: 0,
-        categoryID: '',
+        productCategoryID: '',
         projectID: ''
       },
       dialogFormRules: {
@@ -178,8 +178,8 @@ export default {
       this.loading = true
       try {
         const { data } = await getCategoryTree()
-        this.tableData = data.categoryTree
-        this.treeselectData = [{ id: 0, title: '顶级分类', children: data.categoryTree }]
+        this.tableData = data.productCategoryTree
+        this.treeselectData = [{ id: 0, title: '顶级分类', children: data.productCategoryTree }]
       } finally {
         this.loading = false
       }
@@ -232,7 +232,7 @@ export default {
               const { message } = await createCategory(dialogFormDataCopy)
               msg = message
             } else {
-              const { message } = await updateCategory(dialogFormDataCopy.categoryID, dialogFormDataCopy)
+              const { message } = await updateCategory(dialogFormDataCopy.productCategoryID, dialogFormDataCopy)
               msg = message
             }
           } finally {
@@ -268,7 +268,7 @@ export default {
         sort: 999,
         hidden: '否',
         parentId: 0,
-        categoryID: '',
+        productCategoryID: '',
         projectID: ''
       }
     },
@@ -283,11 +283,11 @@ export default {
         this.loading = true
         const categoryIds = []
         this.multipleSelection.forEach(x => {
-          categoryIds.push(x.categoryID)
+          categoryIds.push(x.productCategoryID)
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteCategory({ categoryIds: categoryIds.join(',') })
+          const { message } = await batchDeleteCategory({ productCategoryIds: categoryIds.join(',') })
           msg = message
         } finally {
           this.loading = false
