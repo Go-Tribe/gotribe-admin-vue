@@ -317,7 +317,7 @@ export default {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteCategory({ categoryIds: String(Id) })
+        const { message } = await batchDeleteCategory({ productCategoryIds: String(Id) })
         msg = message
       } finally {
         this.loading = false
