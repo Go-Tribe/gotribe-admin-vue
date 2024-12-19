@@ -99,12 +99,12 @@
 </template>
 
 <script>
-import { getSpecList, createSpec, updateSpec, batchDeleteSpec } from '@/api/store/spec'
+import { getSpecList, createSpec, updateSpec, batchDeleteSpec } from '@/api/store/product-spec'
 import { specTypeEnum, specTypeMap, specTypeOptions } from '@/constant/store'
 import SpecItem from './components/spec-item.vue'
 
 export default {
-  name: 'Spec',
+  name: 'ProductSpec',
   components: {
     SpecItem
   },

@@ -107,11 +107,11 @@
 import ResourceSelect from '@/components/ResourceSelect'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { getCategoryTree, createCategory, updateCategory, batchDeleteCategory } from '@/api/store/category'
+import { getCategoryTree, createCategory, updateCategory, batchDeleteCategory } from '@/api/store/product-category'
 import { getProjectList } from '@/api/business/project'
 
 export default {
-  name: 'StoreCategory',
+  name: 'ProductCategory',
   components: {
     ResourceSelect,
     Treeselect

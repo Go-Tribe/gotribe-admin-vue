@@ -89,11 +89,11 @@
 </template>
 
 <script>
-import { getSpecItemList, createSpecItem, updateSpecItem, batchDeleteSpecItem } from '@/api/store/spec'
+import { getSpecItemList, createSpecItem, updateSpecItem, batchDeleteSpecItem } from '@/api/store/product-spec'
 import { specItemStatusEnum, specItemStatusOptions, specItemStatusMap } from '@/constant/store'
 
 export default {
-  name: 'SpecItem',
+  name: 'ProductSpecItem',
   props: {
     specID: {
       type: String,
