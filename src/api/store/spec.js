@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 
-// 获取接口列表
 export function getSpecList(params) {
   return request({
     url: '/api/product/spec',
@@ -9,7 +8,6 @@ export function getSpecList(params) {
   })
 }
 
-// 创建接口
 export function createSpec(data) {
   return request({
     url: '/api/product/spec',
@@ -18,7 +16,6 @@ export function createSpec(data) {
   })
 }
 
-// 更新接口
 export function updateSpec(Id, data) {
   return request({
     url: '/api/product/spec/' + Id,
@@ -27,7 +24,6 @@ export function updateSpec(Id, data) {
   })
 }
 
-// 批量删除接口
 export function batchDeleteSpec(data) {
   return request({
     url: '/api/product/spec',
@@ -36,10 +32,35 @@ export function batchDeleteSpec(data) {
   })
 }
 
-// 获取详情接口
-export function getSpecDetail(Id) {
+export function getSpecItemList(params) {
   return request({
-    url: '/api/product/spec/' + Id,
-    method: 'get'
+    url: '/api/product/spec/item',
+    method: 'get',
+    params
   })
 }
+
+export function createSpecItem(data) {
+  return request({
+    url: '/api/product/spec/item',
+    method: 'post',
+    data
+  })
+}
+
+export function updateSpecItem(Id, data) {
+  return request({
+    url: '/api/product/spec/item/' + Id,
+    method: 'patch',
+    data
+  })
+}
+
+export function batchDeleteSpecItem(data) {
+  return request({
+    url: '/api/product/spec/item',
+    method: 'delete',
+    data
+  })
+}
+

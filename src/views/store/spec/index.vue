@@ -27,8 +27,18 @@
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="sort" label="排序" />
         <el-table-column show-overflow-tooltip prop="remark" label="备注" />
-        <el-table-column fixed="right" label="操作" align="center" width="120">
+        <el-table-column fixed="right" label="操作" align="center" width="180">
           <template slot-scope="scope">
+            <el-tooltip content="规格选项" effect="dark" placement="top">
+              <el-button
+                class="ml-10"
+                size="mini"
+                icon="el-icon-files"
+                circle
+                type="primary"
+                @click="editSpecItem(scope.row.productSpecID)"
+              />
+            </el-tooltip>
             <el-tooltip content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
@@ -80,6 +90,10 @@
         </div>
       </el-dialog>
 
+      <el-dialog title="规格选项" :visible.sync="dialogSpecItemVisible">
+        <SpecItem v-if="dialogSpecItemVisible" :spec-i-d="curSpecID" />
+      </el-dialog>
+
     </el-card>
   </div>
 </template>
@@ -87,9 +101,13 @@
 <script>
 import { getSpecList, createSpec, updateSpec, batchDeleteSpec } from '@/api/store/spec'
 import { specTypeEnum, specTypeMap, specTypeOptions } from '@/constant/store'
+import SpecItem from './components/spec-item.vue'
 
 export default {
   name: 'Spec',
+  components: {
+    SpecItem
+  },
   data() {
     return {
       specTypeEnum,
@@ -130,13 +148,19 @@ export default {
       // 删除按钮弹出框
       popoverVisible: false,
       // 表格多选
-      multipleSelection: []
+      multipleSelection: [],
+      curSpecID: '',
+      dialogSpecItemVisible: false
     }
   },
   created() {
     this.getTableData()
   },
   methods: {
+    editSpecItem(specID) {
+      this.curSpecID = specID
+      this.dialogSpecItemVisible = true
+    },
     // 查询
     search() {
       this.params.pageNum = 1

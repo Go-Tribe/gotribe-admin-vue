@@ -18,3 +18,24 @@ export const specTypeOptions = [
     value: specTypeEnum.image
   }
 ]
+
+export const specItemStatusEnum = {
+  enable: 1,
+  disable: 2
+}
+
+export const specItemStatusMap = {
+  [specItemStatusEnum.enable]: '启用',
+  [specItemStatusEnum.disable]: '图片'
+}
+
+export const specItemStatusOptions = [
+  {
+    text: '启用',
+    value: specItemStatusEnum.enable
+  },
+  {
+    text: '不器用',
+    value: specItemStatusEnum.disable
+  }
+]

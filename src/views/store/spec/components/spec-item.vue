@@ -1,82 +1,110 @@
 <template>
-  <div>
-    <el-card class="m-10" shadow="always">
-      <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <el-form-item>
-          <el-button :loading="loading" icon="el-icon-plus" type="warning" @click="create">新增</el-button>
+  <el-card shadow="never">
+    <el-form size="mini" :inline="true" class="demo-form-inline">
+      <el-form-item>
+        <el-button :loading="loading" icon="el-icon-plus" type="warning" @click="create">新增</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button :disabled="multipleSelection.length === 0" :loading="loading" icon="el-icon-delete" type="danger" @click="batchDelete">批量删除</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" height="500" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column show-overflow-tooltip prop="productSpecItemID" label="ID" width="150" />
+      <el-table-column show-overflow-tooltip prop="title" label="规格值名称" />
+      <el-table-column show-overflow-tooltip prop="sort" label="排序" />
+      <el-table-column show-overflow-tooltip label="是否启用">
+        <template slot-scope="scope">
+          <el-tag
+            size="small"
+            :type="scope.row.enabled === specItemStatusEnum.enable ? 'success' : 'danger'"
+          >{{ specItemStatusMap[scope.row.enabled] }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" align="center" width="120">
+        <template slot-scope="scope">
+          <el-tooltip content="启用" effect="dark" placement="top">
+            <el-popconfirm title="确定启用吗？" @onConfirm="updateSpecItemStatus(scope.row, specItemStatusEnum.enable)">
+              <el-button
+                v-show="scope.row.status === 1"
+                slot="reference"
+                class="ml-10"
+                size="mini"
+                icon="el-icon-turn-off"
+                circle
+                type="primary"
+              />
+            </el-popconfirm>
+          </el-tooltip>
+          <el-tooltip content="禁用" effect="dark" placement="top">
+            <el-popconfirm title="确定禁用吗？" @onConfirm="updateSpecItemStatus(scope.row, specItemStatusEnum.disabled)">
+              <el-button
+                v-show="scope.row.status === 2"
+                slot="reference"
+                class="ml-10"
+                size="mini"
+                icon="el-icon-turn-off"
+                circle
+                type="danger"
+              />
+            </el-popconfirm>
+          </el-tooltip>
+          <el-tooltip content="编辑" effect="dark" placement="top">
+            <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
+          </el-tooltip>
+          <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
+            <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productSpecItemID)">
+              <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
+            </el-popconfirm>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" :modal="false" @close="resetForm">
+      <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
+        <el-form-item label="规格值名称" prop="title">
+          <el-input v-model.trim="dialogFormData.title" placeholder="规格值名称" />
         </el-form-item>
-        <el-form-item>
-          <el-button :disabled="multipleSelection.length === 0" :loading="loading" icon="el-icon-delete" type="danger" @click="batchDelete">批量删除</el-button>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model.number="dialogFormData.sort" placeholder="排序" />
+        </el-form-item>
+        <el-form-item label="是否启用" prop="enabled">
+          <el-radio-group v-model="dialogFormData.enabled">
+            <el-radio
+              v-for="item in specItemStatusOptions"
+              :key="item.value"
+              :label="item.value"
+            >{{ item.text }}</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="cancelForm()">取 消</el-button>
+        <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
+      </div>
+    </el-dialog>
 
-      <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column show-overflow-tooltip prop="productSpecID" label="ID" width="150" />
-        <el-table-column show-overflow-tooltip prop="title" label="规格名称" />
-        <el-table-column show-overflow-tooltip label="显示类型">
-          <template slot-scope="scope">
-            <el-tag size="small" :type="scope.row.format === specTypeEnum.text ? 'primary':'success'">{{ specTypeMap[scope.row.format] }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column show-overflow-tooltip prop="sort" label="排序" />
-        <el-table-column show-overflow-tooltip prop="remark" label="备注" />
-        <el-table-column fixed="right" label="操作" align="center" width="120">
-          <template slot-scope="scope">
-            <el-tooltip content="编辑" effect="dark" placement="top">
-              <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
-            </el-tooltip>
-            <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
-              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productSpecID)">
-                <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
-              </el-popconfirm>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" @close="resetForm">
-        <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
-          <el-form-item label="规格名称" prop="title">
-            <el-input v-model.trim="dialogFormData.title" placeholder="规格名称" />
-          </el-form-item>
-          <el-form-item label="显示类型" prop="specType">
-            <el-radio-group v-model="dialogFormData.format">
-              <el-radio
-                v-for="item in specTypeOptions"
-                :key="item.value"
-                :label="item.value"
-              >{{ item.text }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="排序" prop="sort">
-            <el-input v-model.number="dialogFormData.sort" placeholder="排序" />
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model.trim="dialogFormData.remark" type="textarea" placeholder="备注" />
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button size="mini" @click="cancelForm()">取 消</el-button>
-          <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
-        </div>
-      </el-dialog>
-
-    </el-card>
-  </div>
+  </el-card>
 </template>
 
 <script>
-import { getSpecList, createSpec, updateSpec, batchDeleteSpec } from '@/api/store/spec'
-import { specTypeEnum, specTypeMap, specTypeOptions } from '@/constant/store'
+import { getSpecItemList, createSpecItem, updateSpecItem, batchDeleteSpecItem } from '@/api/store/spec'
+import { specItemStatusEnum, specItemStatusOptions, specItemStatusMap } from '@/constant/store'
 
 export default {
   name: 'SpecItem',
+  props: {
+    specID: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      specTypeEnum,
-      specTypeMap,
-      specTypeOptions,
+      specItemStatusEnum,
+      specItemStatusOptions,
+      specItemStatusMap,
       // 表格数据
       tableData: [],
       loading: false,
@@ -87,10 +115,10 @@ export default {
       dialogType: '',
       dialogFormVisible: false,
       dialogFormData: {
+        specID: this.specID,
         title: '',
-        format: specTypeEnum.text,
         sort: '',
-        remark: ''
+        enabled: specItemStatusEnum.enable
       },
       dialogFormRules: {
         title: [
@@ -112,18 +140,37 @@ export default {
     this.getTableData()
   },
   methods: {
-    // 查询
-    search() {
-      this.params.pageNum = 1
-      this.getTableData()
-    },
+    async updateSpecItemStatus(row, enabled) {
+      this.loading = true
+      let msg = ''
+      try {
+        const { message } = await updateSpecItem(row.productSpecItemID, {
+          ...row,
+          enabled
+        })
+        msg = message
+      } finally {
+        this.loading = false
+      }
 
+      this.getTableData()
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: 'success'
+      })
+    },
     // 获取表格数据
     async getTableData() {
       this.loading = true
+      const params = {
+        pageNum: 1,
+        pageSize: 500,
+        specID: this.specID
+      }
       try {
-        const { data } = await getSpecList()
-        this.tableData = data.productSpecs
+        const { data } = await getSpecItemList(params)
+        this.tableData = data.productSpecItems
       } finally {
         this.loading = false
       }
@@ -140,7 +187,7 @@ export default {
     update(row) {
       this.dialogFormData = {
         ...row,
-        ID: row.productSpecID
+        ID: row.productSpecItemID
       }
 
       this.dialogFormTitle = '修改规格'
@@ -156,10 +203,10 @@ export default {
           this.submitLoading = true
           try {
             if (this.dialogType === 'create') {
-              const { message } = await createSpec(this.dialogFormData)
+              const { message } = await createSpecItem(this.dialogFormData)
               msg = message
             } else {
-              const { message } = await updateSpec(this.dialogFormData.ID, this.dialogFormData)
+              const { message } = await updateSpecItem(this.dialogFormData.ID, this.dialogFormData)
               msg = message
             }
           } finally {
@@ -188,10 +235,10 @@ export default {
       this.dialogFormVisible = false
       this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
+        specID: this.specID,
         title: '',
-        format: specTypeEnum.text,
         sort: '',
-        remark: ''
+        enabled: specItemStatusEnum.enable
       }
     },
 
@@ -205,11 +252,11 @@ export default {
         this.loading = true
         const ids = []
         this.multipleSelection.forEach(x => {
-          ids.push(x.productSpecID)
+          ids.push(x.productSpecItemID)
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteSpec({ productSpecIds: ids.join(',') })
+          const { message } = await batchDeleteSpecItem({ productSpecIds: ids.join(',') })
           msg = message
         } finally {
           this.loading = false
@@ -240,7 +287,7 @@ export default {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteSpec({ productSpecIds: id })
+        const { message } = await batchDeleteSpecItem({ productSpecIds: id })
         msg = message
       } finally {
         this.loading = false
@@ -252,16 +299,6 @@ export default {
         message: msg,
         type: 'success'
       })
-    },
-
-    // 分页
-    handleSizeChange(val) {
-      this.params.pageSize = val
-      this.getTableData()
-    },
-    handleCurrentChange(val) {
-      this.params.pageNum = val
-      this.getTableData()
     }
   }
 }
