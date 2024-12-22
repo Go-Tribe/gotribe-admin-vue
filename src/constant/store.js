@@ -26,7 +26,7 @@ export const specItemStatusEnum = {
 
 export const specItemStatusMap = {
   [specItemStatusEnum.enable]: '启用',
-  [specItemStatusEnum.disable]: '图片'
+  [specItemStatusEnum.disable]: '禁用'
 }
 
 export const specItemStatusOptions = [
@@ -35,7 +35,7 @@ export const specItemStatusOptions = [
     value: specItemStatusEnum.enable
   },
   {
-    text: '不器用',
+    text: '禁用',
     value: specItemStatusEnum.disable
   }
 ]

@@ -21,14 +21,13 @@
           >{{ specItemStatusMap[scope.row.enabled] }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" align="center" width="120">
+      <el-table-column fixed="right" label="操作" align="center" width="180">
         <template slot-scope="scope">
           <el-tooltip content="启用" effect="dark" placement="top">
             <el-popconfirm title="确定启用吗？" @onConfirm="updateSpecItemStatus(scope.row, specItemStatusEnum.enable)">
               <el-button
-                v-show="scope.row.status === 1"
+                v-show="scope.row.enabled === specItemStatusEnum.disable"
                 slot="reference"
-                class="ml-10"
                 size="mini"
                 icon="el-icon-turn-off"
                 circle
@@ -37,11 +36,10 @@
             </el-popconfirm>
           </el-tooltip>
           <el-tooltip content="禁用" effect="dark" placement="top">
-            <el-popconfirm title="确定禁用吗？" @onConfirm="updateSpecItemStatus(scope.row, specItemStatusEnum.disabled)">
+            <el-popconfirm title="确定禁用吗？" @onConfirm="updateSpecItemStatus(scope.row, specItemStatusEnum.disable)">
               <el-button
-                v-show="scope.row.status === 2"
+                v-show="scope.row.enabled === specItemStatusEnum.enable"
                 slot="reference"
-                class="ml-10"
                 size="mini"
                 icon="el-icon-turn-off"
                 circle
@@ -50,7 +48,7 @@
             </el-popconfirm>
           </el-tooltip>
           <el-tooltip content="编辑" effect="dark" placement="top">
-            <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
+            <el-button size="mini" class="ml-10" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
           </el-tooltip>
           <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
             <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productSpecItemID)">
