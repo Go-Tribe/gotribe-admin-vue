@@ -256,7 +256,7 @@ export default {
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteSpecItem({ productSpecIds: ids.join(',') })
+          const { message } = await batchDeleteSpecItem({ productSpecItemIds: ids.join(',') })
           msg = message
         } finally {
           this.loading = false
@@ -287,7 +287,7 @@ export default {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteSpecItem({ productSpecIds: id })
+        const { message } = await batchDeleteSpecItem({ productSpecItemIds: id })
         msg = message
       } finally {
         this.loading = false

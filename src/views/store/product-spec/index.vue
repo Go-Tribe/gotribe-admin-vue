@@ -90,7 +90,7 @@
         </div>
       </el-dialog>
 
-      <el-dialog title="规格选项" :visible.sync="dialogSpecItemVisible">
+      <el-dialog title="规格选项" :visible.sync="dialogSpecItemVisible" width="80%">
         <SpecItem v-if="dialogSpecItemVisible" :spec-i-d="curSpecID" />
       </el-dialog>
 
