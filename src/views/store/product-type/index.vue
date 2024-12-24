@@ -61,7 +61,7 @@
               style="width:100%;"
             />
           </el-form-item>
-          <el-form-item label="管理类型" prop="specIds">
+          <el-form-item label="规格" prop="specIds">
             <el-select v-model="dialogFormData.specIds" multiple placeholder="请选择" class="w-100">
               <el-option
                 v-for="item in specList"
@@ -130,8 +130,22 @@ export default {
           { required: true, message: '请输入类型名称', trigger: 'blur' },
           { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
         ],
-        format: [
-          { required: true, message: '请选择显示类型', trigger: 'blur' }
+        categoryID: [
+          { required: true, message: '请选择分类', trigger: 'blur' }
+        ],
+        specIds: [
+          {
+            required: true,
+            message: '请选择规格',
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value.length) {
+                callback(new Error('请选择规格'))
+              } else {
+                callback()
+              }
+            }
+          }
         ]
       },
 

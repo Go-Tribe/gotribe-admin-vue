@@ -35,8 +35,8 @@
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column sortable prop="postID" align="center" width="80" label="ID" />
-        <el-table-column show-overflow-tooltip sortable prop="title" label="标题" />
-        <el-table-column show-overflow-tooltip sortable prop="description" label="描述" />
+        <el-table-column show-overflow-tooltip prop="title" label="标题" />
+        <el-table-column show-overflow-tooltip prop="description" label="描述" />
         <el-table-column label="项目">
           <template slot-scope="scope">
             <div>{{ scope.row.project.title }}</div>
@@ -45,13 +45,6 @@
         <el-table-column label="分类">
           <template slot-scope="scope">
             <div>{{ scope.row.category.title }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="标签">
-          <template slot-scope="scope">
-            <div style="display: flex;gap: 8px;">
-              <el-tag v-for="tag in scope.row.tags" :key="tag.tagID">{{ tag.title }}</el-tag>
-            </div>
           </template>
         </el-table-column>
         <el-table-column label="状态" align="center" width="80">
