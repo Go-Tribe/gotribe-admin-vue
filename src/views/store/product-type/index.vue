@@ -326,7 +326,7 @@ export default {
     // treeselect
     normalizer(node) {
       return {
-        id: node.id,
+        id: node.productCategoryID,
         label: node.title,
         children: node.children
       }

@@ -39,3 +39,24 @@ export const specItemStatusOptions = [
     value: specItemStatusEnum.disable
   }
 ]
+
+export const productStatusEnum = {
+  enable: 1,
+  disable: 2
+}
+
+export const productStatusMap = {
+  [productStatusEnum.enable]: '上架',
+  [productStatusEnum.disable]: '下架'
+}
+
+export const productStatusOptions = [
+  {
+    text: '上架',
+    value: productStatusEnum.enable
+  },
+  {
+    text: '下架',
+    value: productStatusEnum.disable
+  }
+]
