@@ -65,8 +65,14 @@ import { resourceType } from '@/constant'
 export default {
   name: 'ResourceSelect',
   props: {
-    value: String,
-    modal: Boolean,
+    value: {
+      type: String,
+      default: ''
+    },
+    modal: {
+      type: Boolean,
+      default: true
+    },
     placeholder: {
       type: String,
       default: '请输入内容'
