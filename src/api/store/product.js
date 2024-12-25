@@ -39,3 +39,10 @@ export function getProductDetail(Id) {
   })
 }
 
+export function getSpecDetail(Id) {
+  return request({
+    url: '/api/product/spec/info/' + Id,
+    method: 'get'
+  })
+}
+

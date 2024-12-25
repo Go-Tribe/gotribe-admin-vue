@@ -25,7 +25,7 @@
       <el-step title="基本信息" />
       <el-step title="商品规格" />
     </el-steps>
-    <el-card v-show="curStep === 0">
+    <el-card v-if="curStep === 0">
       <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm" label-width="80px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="basicForm.title" />
@@ -74,7 +74,25 @@
       </el-form>
       <MdEditor v-if="!id || basicForm.content" ref="mdEditor" class="article-editor" :md-content="basicForm.content" />
     </el-card>
-    <el-card v-show="curStep === 1">这里是商品规格</el-card>
+    <el-card v-if="curStep === 1">
+      <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm.sku" label-width="80px">
+        <el-form-item label="商品价格" prop="unit_price">
+          <el-input v-model.number="basicForm.sku.unit_price" />
+        </el-form-item>
+        <el-form-item label="成本价格" prop="cost_price">
+          <el-input v-model.number="basicForm.sku.cost_price" />
+        </el-form-item>
+        <el-form-item label="市场价格" prop="market_price">
+          <el-input v-model.number="basicForm.sku.market_price" />
+        </el-form-item>
+        <el-form-item label="库存" prop="quantity">
+          <el-input v-model.number="basicForm.sku.quantity" />
+        </el-form-item>
+        <el-form-item label="积分数值" prop="unit_point">
+          <el-input v-model.number="basicForm.sku.unit_point" />
+        </el-form-item>
+      </el-form>
+    </el-card>
   </el-card>
 </template>
 
@@ -82,7 +100,7 @@
 import MdEditor from '@/components/MdEditor'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { createProduct, updateProduct, getProductDetail } from '@/api/store/product'
+import { createProduct, updateProduct, getProductDetail, getSpecDetail } from '@/api/store/product'
 import ResourceSelect from '@/components/ResourceSelect'
 import { getCategoryTree } from '@/api/store/product-category'
 import { getProjectList } from '@/api/business/project'
@@ -115,7 +133,14 @@ export default {
         projectID: '',
         buyLimit: 1,
         productSpec: '1212',
-        enable: productStatusEnum.enable
+        enable: productStatusEnum.enable,
+        sku: {
+          cost_price: '',
+          market_price: '',
+          unit_price: '',
+          unit_point: '',
+          quantity: ''
+        }
       },
       basicFormRules: {
         title: [
@@ -132,12 +157,28 @@ export default {
         ],
         image: [
           { required: true, message: '请填写封面图', trigger: 'blur' }
-        ]
+        ],
+        cost_price: [
+          { required: true, type: 'number', message: '请填写成本价格', trigger: 'blur' }
+        ],
+        unit_price: [
+          { required: true, type: 'number', message: '请填写商品价格', trigger: 'blur' }
+        ],
+        market_price: [
+          { required: true, type: 'number', message: '请填写市场价格', trigger: 'blur' }
+        ],
+        quantity: [
+          { required: true, type: 'number', message: '请填写库存', trigger: 'blur' }
+        ],
+        unit_point: [
+          { required: true, type: 'number', message: '请填写积分数值', trigger: 'blur' }
+        ],
       },
       optionsMap: {
         treeselectData: [],
         projectList: []
-      }
+      },
+      specDetail: []
     }
   },
   created() {
@@ -176,10 +217,11 @@ export default {
       }
     },
     submit() {
+      console.log(this.basicForm.sku)
       this.$refs['basicForm'].validate(valid => {
         if (valid) {
-          this.basicForm.content = this.$refs.mdEditor.getMarkdown()
-          this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
+          // this.basicForm.content = this.$refs.mdEditor.getMarkdown()
+          // this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
           const productMethod = this.id ? updateProduct : createProduct
           productMethod(this.basicForm).then(res => {
             this.$message({
@@ -216,10 +258,16 @@ export default {
             })
             return
           }
+          // this.getSpecDetailData()
           this.curStep++
         }
       })
-    }
+    },
+    // getSpecDetailData() {
+    //   getSpecDetail(this.basicForm.categoryID).then(res => {
+        
+    //   })
+    // }
   }
 }
 </script>
