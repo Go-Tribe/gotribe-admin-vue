@@ -18,15 +18,15 @@
           <el-form-item label="描述" prop="description">
             <el-input v-model="basicForm.description" type="textarea" />
           </el-form-item>
-          <el-form-item label="封面图" prop="image">
-            <ResourceSelect v-model="basicForm.image" placeholder="请填写封面图" />
+          <el-form-item label="商品图" prop="images">
+            <ResourceSelectV2 v-model="basicForm.images" multi />
           </el-form-item>
           <el-form-item label="分类" prop="categoryID">
             <treeselect
               v-model="basicForm.categoryID"
               :options="optionsMap.treeselectData"
               :normalizer="normalizer"
-              style="width: 100%;"
+              class="w-100"
               @input="treeselectInput"
             />
           </el-form-item>
@@ -109,7 +109,7 @@ import MdEditor from '@/components/MdEditor'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { createProduct, updateProduct, getProductDetail } from '@/api/store/product'
-import ResourceSelect from '@/components/ResourceSelect'
+import ResourceSelectV2 from '@/components/ResourceSelectV2'
 import { getCategoryTree } from '@/api/store/product-category'
 import { getProjectList } from '@/api/business/project'
 import { productStatusOptions, productStatusEnum } from '@/constant/store'
@@ -118,7 +118,7 @@ export default {
   components: {
     MdEditor,
     Treeselect,
-    ResourceSelect
+    ResourceSelectV2
   },
   props: {
     id: {
@@ -136,7 +136,7 @@ export default {
         content: '',
         htmlContent: '',
         description: '',
-        image: '',
+        images: [],
         categoryID: null,
         projectID: '',
         buyLimit: 1,
@@ -162,8 +162,17 @@ export default {
         buyLimit: [
           { required: true, message: '请填写限购', trigger: 'blur' }
         ],
-        image: [
-          { required: true, message: '请填写封面图', trigger: 'blur' }
+        images: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (!value.length) {
+                callback(new Error('请上传商品图'))
+              } else {
+                callback()
+              }
+            }
+          }
         ],
         cost_price: [
           { required: true, type: 'number', message: '请填写成本价格', trigger: 'blur' }
@@ -224,7 +233,6 @@ export default {
       }
     },
     submit() {
-      console.log(this.basicForm.sku)
       this.$refs['basicForm'].validate(valid => {
         if (valid) {
           const productMethod = this.id ? updateProduct : createProduct
