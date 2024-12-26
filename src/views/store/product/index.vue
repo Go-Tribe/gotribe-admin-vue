@@ -9,7 +9,7 @@
           <el-input v-model.trim="params.title" clearable placeholder="商品标题" @clear="search" />
         </el-form-item>
         <el-form-item label="ID">
-          <el-input v-model.trim="params.postID" clearable placeholder="ID" @clear="search" />
+          <el-input v-model.trim="params.productID" clearable placeholder="ID" @clear="search" />
         </el-form-item>
         <el-form-item label="项目">
           <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
@@ -34,22 +34,15 @@
 
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column sortable prop="postID" align="center" width="80" label="ID" />
+        <el-table-column sortable prop="productID" align="center" width="80" label="ID" />
         <el-table-column show-overflow-tooltip prop="title" label="标题" />
         <el-table-column show-overflow-tooltip prop="description" label="描述" />
-        <el-table-column label="项目">
-          <template slot-scope="scope">
-            <div>{{ scope.row.project.title }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="分类">
-          <template slot-scope="scope">
-            <div>{{ scope.row.category.title }}</div>
-          </template>
-        </el-table-column>
         <el-table-column label="状态" align="center" width="80">
           <template slot-scope="scope">
-            <el-tag size="small" :type="scope.row.status === 1 ? 'danger':'success'">{{ scope.row.status === 1 ? '草稿':'已发布' }}</el-tag>
+            <el-tag
+              size="small"
+              :type="scope.row.enable === productStatusEnum.enable ? 'success' : 'danger'"
+            >{{ productStatusMap[scope.row.enable] }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="160">
@@ -61,7 +54,7 @@
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
             <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
-              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.postID)">
+              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
             </el-tooltip>
@@ -88,6 +81,7 @@
 <script>
 import { getProductList, batchDeleteProduct } from '@/api/store/product'
 import { getProjectList } from '@/api/business/project'
+import { productStatusEnum, productStatusMap } from '@/constant/store'
 
 import Create from './create.vue'
 
@@ -98,6 +92,8 @@ export default {
   },
   data() {
     return {
+      productStatusEnum,
+      productStatusMap,
       // 查询参数
       params: {
         title: '',
@@ -148,7 +144,7 @@ export default {
       this.loading = true
       try {
         const { data } = await getProductList(this.params)
-        this.tableData = data.posts
+        this.tableData = data.products
         this.total = data.total
       } finally {
         this.loading = false
@@ -179,7 +175,7 @@ export default {
 
     // 修改
     update(row) {
-      this.curId = row.postID
+      this.curId = row.productID
       this.isCreate = true
     },
 
@@ -191,13 +187,13 @@ export default {
         type: 'warning'
       }).then(async res => {
         this.loading = true
-        const postIds = []
+        const productIds = []
         this.multipleSelection.forEach(x => {
-          postIds.push(x.postID)
+          productIds.push(x.productID)
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteProduct({ postIds: postIds.join(',') })
+          const { message } = await batchDeleteProduct({ productIds: productIds.join(',') })
           msg = message
         } finally {
           this.loading = false
@@ -209,12 +205,6 @@ export default {
           message: msg,
           type: 'success'
         })
-      }).catch(() => {
-        this.$message({
-          showClose: true,
-          type: 'info',
-          message: '已取消删除'
-        })
       })
     },
 
@@ -224,11 +214,11 @@ export default {
     },
 
     // 单个删除
-    async singleDelete(postId) {
+    async singleDelete(productId) {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteProduct({ postIds: postId })
+        const { message } = await batchDeleteProduct({ productIds: productId })
         msg = message
       } finally {
         this.loading = false

@@ -1,97 +1,105 @@
 <template>
-  <el-card class="m-10" shadow="always">
+  <el-card class="m-10 product-create" shadow="always">
     <div class="create-header">
       <div class="title">{{ title }}</div>
+      <el-button type="primary" @click="$emit('submit')">返回</el-button>
+    </div>
+    <el-card>
+      <el-tabs v-model="activeTab">
+        <el-tab-pane label="基本信息" disabled name="1" />
+        <el-tab-pane label="商品规格" disabled name="2" />
+        <el-tab-pane label="商品详情" disabled name="3" />
+      </el-tabs>
+      <template v-if="activeTab === '1'">
+        <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm" label-width="80px">
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="basicForm.title" />
+          </el-form-item>
+          <el-form-item label="描述" prop="description">
+            <el-input v-model="basicForm.description" type="textarea" />
+          </el-form-item>
+          <el-form-item label="封面图" prop="image">
+            <ResourceSelect v-model="basicForm.image" placeholder="请填写封面图" />
+          </el-form-item>
+          <el-form-item label="分类" prop="categoryID">
+            <treeselect
+              v-model="basicForm.categoryID"
+              :options="optionsMap.treeselectData"
+              :normalizer="normalizer"
+              style="width: 100%;"
+              @input="treeselectInput"
+            />
+          </el-form-item>
+          <el-form-item label="项目" prop="projectID">
+            <el-select v-model="basicForm.projectID" class="w-100" placeholder="请选择项目">
+              <el-option
+                v-for="item in optionsMap.projectList"
+                :key="item.projectID"
+                :label="item.title"
+                :value="item.projectID"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="限购" prop="buyLimit">
+            <el-input-number
+              v-model="basicForm.buyLimit"
+              controls-position="right"
+              :min="1"
+            />
+          </el-form-item>
+          <el-form-item label="发布状态" prop="enable">
+            <el-radio-group v-model="basicForm.enable">
+              <el-radio
+                v-for="item in productStatusOptions"
+                :key="item.value"
+                :label="item.value"
+              >{{ item.text }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template v-if="activeTab === '2'">
+        <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm.sku" label-width="80px">
+          <el-form-item label="商品价格" prop="unit_price">
+            <el-input v-model.number="basicForm.sku.unit_price" />
+          </el-form-item>
+          <el-form-item label="成本价格" prop="cost_price">
+            <el-input v-model.number="basicForm.sku.cost_price" />
+          </el-form-item>
+          <el-form-item label="市场价格" prop="market_price">
+            <el-input v-model.number="basicForm.sku.market_price" />
+          </el-form-item>
+          <el-form-item label="库存" prop="quantity">
+            <el-input v-model.number="basicForm.sku.quantity" />
+          </el-form-item>
+          <el-form-item label="积分数值" prop="unit_point">
+            <el-input v-model.number="basicForm.sku.unit_point" />
+          </el-form-item>
+        </el-form>
+      </template>
+      <MdEditor
+        v-if="(!id || basicForm.content) && activeTab === '3'"
+        ref="mdEditor"
+        class="article-editor"
+        :md-content="basicForm.content"
+      />
       <div class="operate-btn">
-        <el-button type="primary" @click="$emit('submit')">返回</el-button>
         <el-button
-          v-show="curStep > 0"
+          v-show="activeTab !== '1'"
           type="primary"
-          @click="curStep--"
+          @click="handlePrevClick"
         >上一步</el-button>
         <el-button
-          v-show="curStep === 0"
+          v-show="activeTab !== '3'"
           type="primary"
           @click="handleNextClick"
         >下一步</el-button>
         <el-button
-          v-show="curStep === 1"
+          v-show="activeTab === '3'"
           type="primary"
           @click="submit"
         >提交</el-button>
       </div>
-    </div>
-    <el-steps :active="curStep" class="step" finish-status="success">
-      <el-step title="基本信息" />
-      <el-step title="商品规格" />
-    </el-steps>
-    <el-card v-if="curStep === 0">
-      <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm" label-width="80px">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="basicForm.title" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="basicForm.description" type="textarea" />
-        </el-form-item>
-        <el-form-item label="封面图" prop="image">
-          <ResourceSelect v-model="basicForm.image" placeholder="请填写封面图" />
-        </el-form-item>
-        <el-form-item label="分类" prop="categoryID">
-          <treeselect
-            v-model="basicForm.categoryID"
-            :options="optionsMap.treeselectData"
-            :normalizer="normalizer"
-            style="width: 100%;"
-            @input="treeselectInput"
-          />
-        </el-form-item>
-        <el-form-item label="项目" prop="projectID">
-          <el-select v-model="basicForm.projectID" class="w-100" placeholder="请选择项目">
-            <el-option
-              v-for="item in optionsMap.projectList"
-              :key="item.projectID"
-              :label="item.title"
-              :value="item.projectID"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="购买限制" prop="buyLimit">
-          <el-input-number
-            v-model="basicForm.buyLimit"
-            controls-position="right"
-            :min="1"
-          />
-        </el-form-item>
-        <el-form-item label="发布状态" prop="enable">
-          <el-radio-group v-model="basicForm.enable">
-            <el-radio
-              v-for="item in productStatusOptions"
-              :key="item.value"
-              :label="item.value"
-            >{{ item.text }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <MdEditor v-if="!id || basicForm.content" ref="mdEditor" class="article-editor" :md-content="basicForm.content" />
-    </el-card>
-    <el-card v-if="curStep === 1">
-      <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm.sku" label-width="80px">
-        <el-form-item label="商品价格" prop="unit_price">
-          <el-input v-model.number="basicForm.sku.unit_price" />
-        </el-form-item>
-        <el-form-item label="成本价格" prop="cost_price">
-          <el-input v-model.number="basicForm.sku.cost_price" />
-        </el-form-item>
-        <el-form-item label="市场价格" prop="market_price">
-          <el-input v-model.number="basicForm.sku.market_price" />
-        </el-form-item>
-        <el-form-item label="库存" prop="quantity">
-          <el-input v-model.number="basicForm.sku.quantity" />
-        </el-form-item>
-        <el-form-item label="积分数值" prop="unit_point">
-          <el-input v-model.number="basicForm.sku.unit_point" />
-        </el-form-item>
-      </el-form>
     </el-card>
   </el-card>
 </template>
@@ -100,7 +108,7 @@
 import MdEditor from '@/components/MdEditor'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { createProduct, updateProduct, getProductDetail, getSpecDetail } from '@/api/store/product'
+import { createProduct, updateProduct, getProductDetail } from '@/api/store/product'
 import ResourceSelect from '@/components/ResourceSelect'
 import { getCategoryTree } from '@/api/store/product-category'
 import { getProjectList } from '@/api/business/project'
@@ -121,7 +129,7 @@ export default {
   data() {
     return {
       productStatusOptions,
-      curStep: 0,
+      activeTab: '1',
       title: '新建商品',
       basicForm: {
         title: '',
@@ -132,7 +140,6 @@ export default {
         categoryID: null,
         projectID: '',
         buyLimit: 1,
-        productSpec: '1212',
         enable: productStatusEnum.enable,
         sku: {
           cost_price: '',
@@ -153,7 +160,7 @@ export default {
           { required: true, message: '请选择项目', trigger: 'blur' }
         ],
         buyLimit: [
-          { required: true, message: '请填写购买限制', trigger: 'blur' }
+          { required: true, message: '请填写限购', trigger: 'blur' }
         ],
         image: [
           { required: true, message: '请填写封面图', trigger: 'blur' }
@@ -220,8 +227,6 @@ export default {
       console.log(this.basicForm.sku)
       this.$refs['basicForm'].validate(valid => {
         if (valid) {
-          // this.basicForm.content = this.$refs.mdEditor.getMarkdown()
-          // this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
           const productMethod = this.id ? updateProduct : createProduct
           productMethod({
             ...this.basicForm,
@@ -252,25 +257,24 @@ export default {
     handleNextClick() {
       this.$refs['basicForm'].validate(valid => {
         if (valid) {
-          this.basicForm.content = this.$refs.mdEditor.getMarkdown()
-          this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
-          if (!this.basicForm.content) {
-            this.$message({
-              message: '请填写商品详情',
-              type: 'warning'
-            })
-            return
+          if (this.activeTab === '3') {
+            this.basicForm.content = this.$refs.mdEditor.getMarkdown()
+            this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
+            if (!this.basicForm.content) {
+              this.$message({
+                message: '请填写商品详情',
+                type: 'warning'
+              })
+              return
+            }
           }
-          // this.getSpecDetailData()
-          this.curStep++
+          this.activeTab = String(Number(this.activeTab) + 1)
         }
       })
+    },
+    handlePrevClick() {
+      this.activeTab = String(Number(this.activeTab) - 1)
     }
-    // getSpecDetailData() {
-    //   getSpecDetail(this.basicForm.categoryID).then(res => {
-
-    //   })
-    // }
   }
 }
 </script>
@@ -293,6 +297,10 @@ export default {
 </style>
 <style lang="scss">
 .article-editor {
-  height: calc(100vh - 250px) !important;
+  height: calc(100vh - 400px) !important;
+  margin-bottom: 50px;
+}
+.product-create .el-tabs__item.is-disabled {
+  color: #303133;
 }
 </style>
