@@ -60,6 +60,9 @@
       </template>
       <template v-if="activeTab === '2'">
         <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm.sku" label-width="80px">
+          <el-form-item label="规格名称" prop="sku_title">
+            <el-input v-model="basicForm.sku.sku_title" />
+          </el-form-item>
           <el-form-item label="商品价格" prop="unit_price">
             <el-input v-model.number="basicForm.sku.unit_price" />
           </el-form-item>
@@ -142,6 +145,7 @@ export default {
         buyLimit: 1,
         enable: productStatusEnum.enable,
         sku: {
+          sku_title: '',
           cost_price: '',
           market_price: '',
           unit_price: '',
@@ -173,6 +177,9 @@ export default {
               }
             }
           }
+        ],
+        sku_title: [
+          { required: true, message: '请填写规格名称', trigger: 'blur' }
         ],
         cost_price: [
           { required: true, type: 'number', message: '请填写成本价格', trigger: 'blur' }
@@ -233,22 +240,27 @@ export default {
       }
     },
     submit() {
-      this.$refs['basicForm'].validate(valid => {
-        if (valid) {
-          const productMethod = this.id ? updateProduct : createProduct
-          productMethod({
-            ...this.basicForm,
-            sku: [this.basicForm.sku]
-          }).then(res => {
-            this.$message({
-              message: `${this.id ? '编辑' : '新建'}成功`,
-              type: 'success'
-            })
-            setTimeout(() => {
-              this.$emit('submit')
-            }, 1000)
-          })
-        }
+      this.basicForm.content = this.$refs.mdEditor.getMarkdown()
+      this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
+      if (!this.basicForm.content) {
+        this.$message({
+          message: '请填写商品详情',
+          type: 'warning'
+        })
+        return
+      }
+      const productMethod = this.id ? updateProduct : createProduct
+      productMethod({
+        ...this.basicForm,
+        sku: [this.basicForm.sku]
+      }).then(res => {
+        this.$message({
+          message: `${this.id ? '编辑' : '新建'}成功`,
+          type: 'success'
+        })
+        setTimeout(() => {
+          this.$emit('submit')
+        }, 1000)
       })
     },
     // treeselect
@@ -265,17 +277,6 @@ export default {
     handleNextClick() {
       this.$refs['basicForm'].validate(valid => {
         if (valid) {
-          if (this.activeTab === '3') {
-            this.basicForm.content = this.$refs.mdEditor.getMarkdown()
-            this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
-            if (!this.basicForm.content) {
-              this.$message({
-                message: '请填写商品详情',
-                type: 'warning'
-              })
-              return
-            }
-          }
           this.activeTab = String(Number(this.activeTab) + 1)
         }
       })
