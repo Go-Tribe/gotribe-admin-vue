@@ -64,19 +64,19 @@
             <el-input v-model="basicForm.sku.sku_title" />
           </el-form-item>
           <el-form-item label="商品价格" prop="unit_price">
-            <el-input v-model.number="basicForm.sku.unit_price" />
+            <el-input v-model.number="basicForm.sku.unit_price" type="number" />
           </el-form-item>
           <el-form-item label="成本价格" prop="cost_price">
-            <el-input v-model.number="basicForm.sku.cost_price" />
+            <el-input v-model.number="basicForm.sku.cost_price" type="number" />
           </el-form-item>
           <el-form-item label="市场价格" prop="market_price">
-            <el-input v-model.number="basicForm.sku.market_price" />
+            <el-input v-model.number="basicForm.sku.market_price" type="number" />
           </el-form-item>
           <el-form-item label="库存" prop="quantity">
             <el-input v-model.number="basicForm.sku.quantity" />
           </el-form-item>
           <el-form-item label="积分数值" prop="unit_point">
-            <el-input v-model.number="basicForm.sku.unit_point" />
+            <el-input v-model.number="basicForm.sku.unit_point" type="number" />
           </el-form-item>
         </el-form>
       </template>
@@ -146,11 +146,11 @@ export default {
         enable: productStatusEnum.enable,
         sku: {
           sku_title: '',
-          cost_price: '',
-          market_price: '',
-          unit_price: '',
-          unit_point: '',
-          quantity: ''
+          cost_price: 0,
+          market_price: 0,
+          unit_price: 0,
+          unit_point: 0,
+          quantity: 0
         }
       },
       basicFormRules: {
