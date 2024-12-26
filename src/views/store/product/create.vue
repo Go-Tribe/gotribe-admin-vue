@@ -172,7 +172,7 @@ export default {
         ],
         unit_point: [
           { required: true, type: 'number', message: '请填写积分数值', trigger: 'blur' }
-        ],
+        ]
       },
       optionsMap: {
         treeselectData: [],
@@ -223,7 +223,10 @@ export default {
           // this.basicForm.content = this.$refs.mdEditor.getMarkdown()
           // this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
           const productMethod = this.id ? updateProduct : createProduct
-          productMethod(this.basicForm).then(res => {
+          productMethod({
+            ...this.basicForm,
+            sku: [this.basicForm.sku]
+          }).then(res => {
             this.$message({
               message: `${this.id ? '编辑' : '新建'}成功`,
               type: 'success'
@@ -262,10 +265,10 @@ export default {
           this.curStep++
         }
       })
-    },
+    }
     // getSpecDetailData() {
     //   getSpecDetail(this.basicForm.categoryID).then(res => {
-        
+
     //   })
     // }
   }
