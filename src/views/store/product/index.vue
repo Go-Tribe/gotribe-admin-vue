@@ -8,9 +8,6 @@
         <el-form-item label="商品标题">
           <el-input v-model.trim="params.title" clearable placeholder="商品标题" @clear="search" />
         </el-form-item>
-        <el-form-item label="ID">
-          <el-input v-model.trim="params.productID" clearable placeholder="ID" @clear="search" />
-        </el-form-item>
         <el-form-item label="项目">
           <el-select v-model="params.projectID" clearable placeholder="项目" @clear="search">
             <el-option
@@ -47,11 +44,32 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="160">
           <template slot-scope="scope">
-            <el-tooltip v-if="scope.row.status !== 2" content="发布" effect="dark" placement="top">
-              <el-button size="mini" icon="el-icon-open" circle type="primary" @click="publish(scope.row)" />
+            <!-- <el-tooltip content="上架" effect="dark" placement="top">
+              <el-popconfirm title="确定上架吗？" @onConfirm="updateProductStatus(scope.row, productStatusEnum.enable)">
+                <el-button
+                  v-show="scope.row.enable === productStatusEnum.disable"
+                  slot="reference"
+                  size="mini"
+                  icon="el-icon-turn-off"
+                  circle
+                  type="primary"
+                />
+              </el-popconfirm>
             </el-tooltip>
+            <el-tooltip content="下架" effect="dark" placement="top">
+              <el-popconfirm title="确定下架吗？" @onConfirm="updateProductStatus(scope.row, productStatusEnum.disable)">
+                <el-button
+                  v-show="scope.row.enable === productStatusEnum.enable"
+                  slot="reference"
+                  size="mini"
+                  icon="el-icon-turn-off"
+                  circle
+                  type="danger"
+                />
+              </el-popconfirm>
+            </el-tooltip> -->
             <el-tooltip content="编辑" effect="dark" placement="top">
-              <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
+              <el-button size="mini" icon="el-icon-edit" class="ml-10" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
             <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
               <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productID)">
@@ -79,7 +97,7 @@
 </template>
 
 <script>
-import { getProductList, batchDeleteProduct } from '@/api/store/product'
+import { getProductList, batchDeleteProduct, updateProduct } from '@/api/store/product'
 import { getProjectList } from '@/api/business/project'
 import { productStatusEnum, productStatusMap } from '@/constant/store'
 
@@ -156,17 +174,6 @@ export default {
       this.getTableData()
     },
 
-    publish(row) {
-      // pushProduct(row).then(res => {
-      //   this.getTableData()
-      //   this.$message({
-      //     showClose: true,
-      //     message: '发布成功',
-      //     type: 'success'
-      //   })
-      // })
-    },
-
     // 新增
     create() {
       this.curId = ''
@@ -177,6 +184,27 @@ export default {
     update(row) {
       this.curId = row.productID
       this.isCreate = true
+    },
+
+    async updateProductStatus(row, enable) {
+      this.loading = true
+      let msg = ''
+      try {
+        const { message } = await updateProduct({
+          ...row,
+          enable
+        })
+        msg = message
+      } finally {
+        this.loading = false
+      }
+
+      this.getTableData()
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: 'success'
+      })
     },
 
     // 批量删除

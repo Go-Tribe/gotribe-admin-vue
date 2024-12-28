@@ -2,15 +2,12 @@
   <div>
     <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <el-form-item label="类型名称">
-          <el-input v-model.trim="params.title" clearable placeholder="类型名称" @clear="search" />
+        <!-- <el-form-item label="订单名称">
+          <el-input v-model.trim="params.title" clearable placeholder="订单名称" @clear="search" />
         </el-form-item>
         <el-form-item>
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button :loading="loading" icon="el-icon-plus" type="warning" @click="create">新增</el-button>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button :disabled="multipleSelection.length === 0" :loading="loading" icon="el-icon-delete" type="danger" @click="batchDelete">批量删除</el-button>
         </el-form-item>
@@ -18,17 +15,43 @@
 
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column show-overflow-tooltip prop="productTypeID" label="ID" width="150" />
-        <el-table-column show-overflow-tooltip prop="title" label="类型名称" />
-        <el-table-column show-overflow-tooltip prop="categoryID" label="分类编号" />
-        <el-table-column show-overflow-tooltip prop="remark" label="备注" />
-        <el-table-column fixed="right" label="操作" align="center" width="120">
+        <el-table-column show-overflow-tooltip prop="orderID" label="ID" width="150" />
+        <el-table-column show-overflow-tooltip prop="orderNumber" label="订单号" />
+        <el-table-column label="商品信息">
           <template slot-scope="scope">
-            <el-tooltip content="编辑" effect="dark" placement="top">
+            <div class="flex items-center">
+              <img :src="scope.row.productImage" style="height: 50px;width: 50px;">
+              <div class="flex items-center ml-10">{{ scope.row.productName }}</div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip label="用户信息">
+          <template slot-scope="scope">
+            {{ scope.row.username }} | {{ scope.row.userID }}
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip prop="amountPay" label="实际支付" />
+        <el-table-column show-overflow-tooltip label="支付方式">
+          <template slot-scope="scope">
+            <div>{{ payMethodMap[scope.row.orderType] }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip prop="payTime" label="支付时间" />
+        <el-table-column show-overflow-tooltip label="订单状态">
+          <template slot-scope="scope">
+            <div>{{ orderStatusMap[scope.row.status] }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" align="center" width="180">
+          <template slot-scope="scope">
+            <!-- <el-tooltip content="查看详情" effect="dark" placement="top">
+              <el-button size="mini" icon="el-icon-view" circle type="primary" @click="update(scope.row)" />
+            </el-tooltip> -->
+            <el-tooltip class="ml-10" content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
             <el-tooltip class="ml-10" content="删除" effect="dark" placement="top">
-              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.productTypeID)">
+              <el-popconfirm title="确定删除吗？" @onConfirm="singleDelete(scope.row.orderID)">
                 <el-button slot="reference" size="mini" icon="el-icon-delete" circle type="danger" />
               </el-popconfirm>
             </el-tooltip>
@@ -50,29 +73,21 @@
 
       <el-dialog :title="dialogFormTitle" :visible.sync="dialogFormVisible" @close="resetForm">
         <el-form ref="dialogForm" size="small" :model="dialogFormData" :rules="dialogFormRules" label-width="120px">
-          <el-form-item label="类型名称" prop="title">
-            <el-input v-model.trim="dialogFormData.title" placeholder="类型名称" />
+          <el-form-item label="实际支付金额" prop="amountPay">
+            <el-input v-model.number="dialogFormData.amountPay" type="number" placeholder="实际支付金额" />
           </el-form-item>
-          <el-form-item label="分类" prop="categoryID">
-            <treeselect
-              v-model="dialogFormData.categoryID"
-              :options="treeselectData"
-              :normalizer="normalizer"
-              style="width:100%;"
-            />
-          </el-form-item>
-          <el-form-item label="规格" prop="specIds">
-            <el-select v-model="dialogFormData.specIds" multiple placeholder="请选择" class="w-100">
+          <el-form-item label="订单状态" prop="status">
+            <el-select v-model="dialogFormData.status" placeholder="请选择" class="w-100">
               <el-option
-                v-for="item in specList"
-                :key="item.productSpecID"
-                :label="item.title"
-                :value="item.productSpecID"
+                v-for="item in orderStatusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model.trim="dialogFormData.remark" type="textarea" placeholder="备注" />
+          <el-form-item label="备注" prop="remarkAdmin">
+            <el-input v-model.trim="dialogFormData.remarkAdmin" type="textarea" placeholder="备注" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -86,23 +101,16 @@
 </template>
 
 <script>
-import { getTypeList, createType, updateType, batchDeleteType } from '@/api/store/product-type'
-import { specTypeEnum, specTypeMap, specTypeOptions } from '@/constant/store'
-import { getCategoryTree } from '@/api/store/product-category'
-import { getSpecList } from '@/api/store/product-spec'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { getOrderList, updateOrder, batchDeleteOrder } from '@/api/store/order'
+import { payMethodMap, orderStatusMap, orderStatusOptions } from '@/constant/order'
 
 export default {
-  name: 'ProductType',
-  components: {
-    Treeselect
-  },
+  name: 'Order',
   data() {
     return {
-      specTypeEnum,
-      specTypeMap,
-      specTypeOptions,
+      payMethodMap,
+      orderStatusMap,
+      orderStatusOptions,
       // 查询参数
       params: {
         title: '',
@@ -120,61 +128,32 @@ export default {
       dialogType: '',
       dialogFormVisible: false,
       dialogFormData: {
-        title: '',
-        categoryID: null,
-        specIds: [],
-        remark: ''
+        amountPay: '',
+        remarkAdmin: null,
+        status: ''
       },
       dialogFormRules: {
-        title: [
-          { required: true, message: '请输入类型名称', trigger: 'blur' },
-          { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
+        amountPay: [
+          { required: true, type: 'number', message: '请输入实际支付金额', trigger: 'blur' }
         ],
-        categoryID: [
-          { required: true, message: '请选择分类', trigger: 'blur' }
+        status: [
+          { required: true, message: '请选择订单状态', trigger: 'blur' }
         ],
-        specIds: [
-          {
-            required: true,
-            message: '请选择规格',
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value.length) {
-                callback(new Error('请选择规格'))
-              } else {
-                callback()
-              }
-            }
-          }
+        remarkAdmin: [
+          { required: true, message: '请输入备注', trigger: 'blur' }
         ]
       },
 
       // 删除按钮弹出框
       popoverVisible: false,
       // 表格多选
-      multipleSelection: [],
-      treeselectData: [],
-      specList: []
+      multipleSelection: []
     }
   },
   created() {
     this.getTableData()
-    this.getCategoryData()
-    this.getSpecData()
   },
   methods: {
-    async getSpecData() {
-      const params = {
-        pageNum: 1,
-        pageSize: 500
-      }
-      const { data } = await getSpecList(params)
-      this.specList = data.productSpecs
-    },
-    async getCategoryData() {
-      const { data } = await getCategoryTree()
-      this.treeselectData = data.productCategoryTree
-    },
     // 查询
     search() {
       this.params.pageNum = 1
@@ -185,13 +164,8 @@ export default {
     async getTableData() {
       this.loading = true
       try {
-        const { data } = await getTypeList(this.params)
-        this.tableData = data.productTypes.map(item => {
-          return {
-            ...item,
-            specIds: item.specIds.split(',')
-          }
-        })
+        const { data } = await getOrderList(this.params)
+        this.tableData = data.orders
         this.total = data.total
       } finally {
         this.loading = false
@@ -200,19 +174,16 @@ export default {
 
     // 新增
     create() {
-      this.dialogFormTitle = '新增类型'
+      this.dialogFormTitle = '新增订单'
       this.dialogType = 'create'
       this.dialogFormVisible = true
     },
 
     // 修改
     update(row) {
-      this.dialogFormData = {
-        ...row,
-        ID: row.productTypeID
-      }
+      this.dialogFormData = row
 
-      this.dialogFormTitle = '修改类型'
+      this.dialogFormTitle = '修改订单'
       this.dialogType = 'update'
       this.dialogFormVisible = true
     },
@@ -224,18 +195,10 @@ export default {
           let msg = ''
           this.submitLoading = true
           try {
-            const params = {
-              ...this.dialogFormData,
-              specIds: this.dialogFormData.specIds.join(','),
-              categoryID: String(this.dialogFormData.categoryID)
-            }
-            if (this.dialogType === 'create') {
-              const { message } = await createType(params)
-              msg = message
-            } else {
-              const { message } = await updateType(this.dialogFormData.ID, params)
-              msg = message
-            }
+            const params = this.dialogFormData
+
+            const { message } = await updateOrder(params)
+            msg = message
           } finally {
             this.submitLoading = false
           }
@@ -262,10 +225,9 @@ export default {
       this.dialogFormVisible = false
       this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
-        title: '',
-        categoryID: null,
-        specIds: [],
-        remark: ''
+        amountPay: '',
+        remarkAdmin: null,
+        status: ''
       }
     },
 
@@ -279,11 +241,11 @@ export default {
         this.loading = true
         const ids = []
         this.multipleSelection.forEach(x => {
-          ids.push(x.productTypeID)
+          ids.push(x.orderID)
         })
         let msg = ''
         try {
-          const { message } = await batchDeleteType({ productTypeIds: ids.join(',') })
+          const { message } = await batchDeleteOrder({ orderIds: ids.join(',') })
           msg = message
         } finally {
           this.loading = false
@@ -314,7 +276,7 @@ export default {
       this.loading = true
       let msg = ''
       try {
-        const { message } = await batchDeleteType({ productTypeIds: id })
+        const { message } = await batchDeleteOrder({ orderIds: id })
         msg = message
       } finally {
         this.loading = false
@@ -336,14 +298,6 @@ export default {
     handleCurrentChange(val) {
       this.params.pageNum = val
       this.getTableData()
-    },
-    // treeselect
-    normalizer(node) {
-      return {
-        id: node.productCategoryID,
-        label: node.title,
-        children: node.children
-      }
     }
   }
 }

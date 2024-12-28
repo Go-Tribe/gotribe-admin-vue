@@ -8,9 +8,9 @@ export function getOrderList(params) {
   })
 }
 
-export function updateOrder(Id, data) {
+export function updateOrder(data) {
   return request({
-    url: '/api/order/' + Id,
+    url: '/api/order/' + data.orderID,
     method: 'patch',
     data
   })
