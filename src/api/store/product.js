@@ -16,9 +16,9 @@ export function createProduct(data) {
   })
 }
 
-export function updateProduct(Id, data) {
+export function updateProduct(data) {
   return request({
-    url: '/api/product/' + Id,
+    url: '/api/product/' + data.productID,
     method: 'patch',
     data
   })
