@@ -60,23 +60,23 @@
       </template>
       <template v-if="activeTab === '2'">
         <el-form ref="basicForm" :rules="basicFormRules" :model="basicForm.sku" label-width="80px">
-          <el-form-item label="规格名称" prop="sku_title">
-            <el-input v-model="basicForm.sku.sku_title" />
+          <el-form-item label="规格名称" prop="skuTitle">
+            <el-input v-model="basicForm.sku.skuTitle" />
           </el-form-item>
-          <el-form-item label="商品价格" prop="unit_price">
-            <el-input v-model.number="basicForm.sku.unit_price" type="number" />
+          <el-form-item label="商品价格" prop="unitPrice">
+            <el-input v-model.number="basicForm.sku.unitPrice" type="number" />
           </el-form-item>
-          <el-form-item label="成本价格" prop="cost_price">
-            <el-input v-model.number="basicForm.sku.cost_price" type="number" />
+          <el-form-item label="成本价格" prop="costPrice">
+            <el-input v-model.number="basicForm.sku.costPrice" type="number" />
           </el-form-item>
-          <el-form-item label="市场价格" prop="market_price">
-            <el-input v-model.number="basicForm.sku.market_price" type="number" />
+          <el-form-item label="市场价格" prop="marketPrice">
+            <el-input v-model.number="basicForm.sku.marketPrice" type="number" />
           </el-form-item>
           <el-form-item label="库存" prop="quantity">
             <el-input v-model.number="basicForm.sku.quantity" />
           </el-form-item>
-          <el-form-item label="积分数值" prop="unit_point">
-            <el-input v-model.number="basicForm.sku.unit_point" type="number" />
+          <el-form-item label="积分数值" prop="unitPoint">
+            <el-input v-model.number="basicForm.sku.unitPoint" type="number" />
           </el-form-item>
         </el-form>
       </template>
@@ -145,11 +145,11 @@ export default {
         buyLimit: 1,
         enable: productStatusEnum.enable,
         sku: {
-          sku_title: '',
-          cost_price: 0,
-          market_price: 0,
-          unit_price: 0,
-          unit_point: 0,
+          skuTitle: '',
+          costPrice: 0,
+          marketPrice: 0,
+          unitPrice: 0,
+          unitPoint: 0,
           quantity: 0
         }
       },
@@ -178,22 +178,22 @@ export default {
             }
           }
         ],
-        sku_title: [
+        skuTitle: [
           { required: true, message: '请填写规格名称', trigger: 'blur' }
         ],
-        cost_price: [
+        costPrice: [
           { required: true, type: 'number', message: '请填写成本价格', trigger: 'blur' }
         ],
-        unit_price: [
+        unitPrice: [
           { required: true, type: 'number', message: '请填写商品价格', trigger: 'blur' }
         ],
-        market_price: [
+        marketPrice: [
           { required: true, type: 'number', message: '请填写市场价格', trigger: 'blur' }
         ],
         quantity: [
           { required: true, type: 'number', message: '请填写库存', trigger: 'blur' }
         ],
-        unit_point: [
+        unitPoint: [
           { required: true, type: 'number', message: '请填写积分数值', trigger: 'blur' }
         ]
       },
@@ -231,10 +231,10 @@ export default {
         this.title = '编辑商品'
         getProductDetail(this.id).then(res => {
           if (res.code === 200) {
-            // this.basicForm = {
-            //   ...res.data.post,
-            //   tag: res.data.post.tag ? res.data.post.tag.split(',') : []
-            // }
+            this.basicForm = {
+              ...res.data.product,
+              sku: res.data.product?.sku?.[0] || {}
+            }
           }
         })
       }

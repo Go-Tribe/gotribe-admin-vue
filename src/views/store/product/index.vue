@@ -153,7 +153,7 @@ export default {
 
     submit() {
       this.isCreate = false
-      // this.getTableData()
+      this.getTableData()
     },
 
     publish(row) {
