@@ -44,9 +44,9 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center" width="180">
           <template slot-scope="scope">
-            <!-- <el-tooltip content="查看详情" effect="dark" placement="top">
-              <el-button size="mini" icon="el-icon-view" circle type="primary" @click="update(scope.row)" />
-            </el-tooltip> -->
+            <el-tooltip content="查看详情" effect="dark" placement="top">
+              <el-button size="mini" icon="el-icon-view" circle type="primary" @click="showOrderDetail(scope.row.orderID)" />
+            </el-tooltip>
             <el-tooltip class="ml-10" content="编辑" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-edit" circle type="primary" @click="update(scope.row)" />
             </el-tooltip>
@@ -95,7 +95,7 @@
           <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
         </div>
       </el-dialog>
-
+      <OrderDetail ref="orderDetail" />
     </el-card>
   </div>
 </template>
@@ -103,9 +103,13 @@
 <script>
 import { getOrderList, updateOrder, batchDeleteOrder } from '@/api/store/order'
 import { payMethodMap, orderStatusMap, orderStatusOptions } from '@/constant/order'
+import OrderDetail from './components/order-detail.vue'
 
 export default {
   name: 'Order',
+  components: {
+    OrderDetail
+  },
   data() {
     return {
       payMethodMap,
@@ -113,7 +117,6 @@ export default {
       orderStatusOptions,
       // 查询参数
       params: {
-        title: '',
         pageNum: 1,
         pageSize: 10
       },
@@ -154,6 +157,9 @@ export default {
     this.getTableData()
   },
   methods: {
+    showOrderDetail(orderID) {
+      this.$refs.orderDetail.showOrderDetail(orderID)
+    },
     // 查询
     search() {
       this.params.pageNum = 1
