@@ -110,7 +110,7 @@
             style="width: 100%"
           >
             <el-table-column prop="orderID" label="订单ID" />
-            <el-table-column prop="description" label="订单操作" />
+            <el-table-column prop="remark" label="订单操作" />
             <el-table-column prop="createdAt" label="操作时间" />
           </el-table>
         </el-tab-pane>
