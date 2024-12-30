@@ -2,12 +2,41 @@
   <div>
     <el-card class="m-10" shadow="always">
       <el-form size="mini" :inline="true" :model="params" class="demo-form-inline">
-        <!-- <el-form-item label="订单名称">
-          <el-input v-model.trim="params.title" clearable placeholder="订单名称" @clear="search" />
+        <el-form-item label="订单号">
+          <el-input v-model.trim="params.orderNumber" clearable placeholder="订单号" @clear="search" />
+        </el-form-item>
+        <el-form-item label="用户ID">
+          <el-input v-model.trim="params.userID" clearable placeholder="用户ID" @clear="search" />
+        </el-form-item>
+        <el-form-item label="时间范围">
+          <el-date-picker
+            v-model="params.times"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            clearable
+            value-format="yyyy-MM-dd HH:mm:ss"
+          />
+        </el-form-item>
+        <el-form-item label="订单状态">
+          <el-select
+            v-model="params.status"
+            placeholder="订单状态"
+            clearable
+            @clear="search"
+          >
+            <el-option
+              v-for="item in orderStatusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item>
           <el-button :disabled="multipleSelection.length === 0" :loading="loading" icon="el-icon-delete" type="danger" @click="batchDelete">批量删除</el-button>
         </el-form-item>
@@ -117,6 +146,12 @@ export default {
       orderStatusOptions,
       // 查询参数
       params: {
+        orderNumber: '',
+        userID: '',
+        times: [],
+        startTime: '',
+        endTime: '',
+        status: '',
         pageNum: 1,
         pageSize: 10
       },
@@ -163,6 +198,8 @@ export default {
     // 查询
     search() {
       this.params.pageNum = 1
+      this.params.startTime = this.params.times?.[0] || ''
+      this.params.endTime = this.params.times?.[1] || ''
       this.getTableData()
     },
 
