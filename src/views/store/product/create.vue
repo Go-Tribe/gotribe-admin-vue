@@ -75,7 +75,7 @@
           <el-form-item label="库存" prop="quantity">
             <el-input v-model.number="basicForm.sku.quantity" />
           </el-form-item>
-          <el-form-item label="积分数值" prop="unitPoint">
+          <el-form-item label="积分价格" prop="unitPoint">
             <el-input v-model.number="basicForm.sku.unitPoint" type="number" />
           </el-form-item>
         </el-form>
@@ -194,7 +194,7 @@ export default {
           { required: true, type: 'number', message: '请填写库存', trigger: 'blur' }
         ],
         unitPoint: [
-          { required: true, type: 'number', message: '请填写积分数值', trigger: 'blur' }
+          { required: true, type: 'number', message: '请填写积分价格', trigger: 'blur' }
         ]
       },
       optionsMap: {
