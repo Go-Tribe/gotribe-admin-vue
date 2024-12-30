@@ -69,7 +69,7 @@
             <el-input v-model.trim="dialogFormData.title" placeholder="规格名称" />
           </el-form-item>
           <el-form-item label="显示类型" prop="specType">
-            <el-radio-group v-model="dialogFormData.format">
+            <el-radio-group v-model="dialogFormData.format" :disabled="dialogType === 'update'">
               <el-radio
                 v-for="item in specTypeOptions"
                 :key="item.value"
@@ -77,8 +77,11 @@
               >{{ item.text }}</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item v-if="dialogFormData.format === specTypeEnum.image" label="图片" prop="image">
+            <ResourceSelectV2 v-model="dialogFormData.image" :modal="false" />
+          </el-form-item>
           <el-form-item label="排序" prop="sort">
-            <el-input v-model.number="dialogFormData.sort" placeholder="排序" />
+            <el-input v-model.number="dialogFormData.sort" type="number" placeholder="排序" />
           </el-form-item>
           <el-form-item label="备注" prop="remark">
             <el-input v-model.trim="dialogFormData.remark" type="textarea" placeholder="备注" />
@@ -102,11 +105,13 @@
 import { getSpecList, createSpec, updateSpec, batchDeleteSpec } from '@/api/store/product-spec'
 import { specTypeEnum, specTypeMap, specTypeOptions } from '@/constant/store'
 import SpecItem from './components/spec-item.vue'
+import ResourceSelectV2 from '@/components/ResourceSelectV2'
 
 export default {
   name: 'ProductSpec',
   components: {
-    SpecItem
+    SpecItem,
+    ResourceSelectV2
   },
   data() {
     return {
@@ -133,7 +138,8 @@ export default {
         title: '',
         format: specTypeEnum.text,
         sort: '',
-        remark: ''
+        remark: '',
+        image: ''
       },
       dialogFormRules: {
         title: [
@@ -241,7 +247,8 @@ export default {
         title: '',
         format: specTypeEnum.text,
         sort: '',
-        remark: ''
+        remark: '',
+        image: ''
       }
     },
 
