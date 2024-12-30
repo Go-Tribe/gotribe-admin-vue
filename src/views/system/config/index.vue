@@ -20,6 +20,7 @@
 <script>
 import ResourceSelectV2 from '@/components/ResourceSelectV2'
 import { getConfig, updateConfig } from '@/api/system/config'
+import store from '@/store'
 
 export default {
   name: 'Config',
@@ -59,6 +60,7 @@ export default {
       this.$refs['form'].validate(async valid => {
         if (valid) {
           const { message } = await updateConfig(this.formData)
+          store.dispatch('app/getSystemConfig')
           this.$message({
             showClose: true,
             message: message,

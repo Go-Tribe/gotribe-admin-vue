@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import defaultSettings from '@/settings'
+import { mapGetters } from 'vuex'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -23,10 +23,15 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      title: defaultSettings.title,
-      logo: defaultSettings.logo
+  computed: {
+    ...mapGetters([
+      'systemConfig'
+    ]),
+    title() {
+      return this.systemConfig.title
+    },
+    logo() {
+      return this.systemConfig.logo
     }
   }
 }

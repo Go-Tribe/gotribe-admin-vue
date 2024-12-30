@@ -66,9 +66,18 @@
 <script>
 import JSEncrypt from 'jsencrypt'
 import defaultSettings from '@/settings'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Login',
+  computed: {
+    ...mapGetters([
+      'systemConfig'
+    ]),
+    title() {
+      return this.systemConfig.title
+    }
+  },
   data() {
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -78,7 +87,6 @@ export default {
       }
     }
     return {
-      title: defaultSettings.title,
       currentYear: '',
       imgSrc: require('@/assets/backgd-image/backimg.jpg'),
       loginForm: {
