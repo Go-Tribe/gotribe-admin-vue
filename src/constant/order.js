@@ -40,10 +40,10 @@ export const orderStatusOptions = [
 ]
 
 export const payMethodMap = {
-  1: '微信支付',
-  2: '支付宝支付',
-  3: '积分支付',
-  4: '余额支付'
+  1: '微信',
+  2: '支付宝',
+  3: '积分',
+  4: '余额'
 }
 
 export const payStatusMap = {

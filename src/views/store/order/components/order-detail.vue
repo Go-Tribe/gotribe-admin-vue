@@ -1,6 +1,6 @@
 <template>
   <el-dialog title="订单详情" :visible.sync="dialogFormVisible" @close="resetForm">
-    <div class="order-detail">
+    <div v-if="orderDetail.orderID" class="order-detail">
       <div class="order-detail-header">
         <div class="order-detail-header-info">
           <i class="el-icon-s-order order-detail-header-info-img" />
@@ -34,11 +34,11 @@
             <div class="order-detail-order-info-title">用户信息</div>
             <el-row class="mt-16">
               <el-col :span="8">
-                <span class="order-detail-order-info-text">用户名称：{{ orderDetail.username }}</span>
+                <span class="order-detail-order-info-text">用户名称：{{ orderDetail.user.nickname }}</span>
               </el-col>
-              <!-- <el-col :span="8">
-                <span class="order-detail-order-info-text">绑定电话：{{ orderDetail.phone }}</span>
-              </el-col> -->
+              <el-col :span="8">
+                <span class="order-detail-order-info-text">邮箱：{{ orderDetail.user.email }}</span>
+              </el-col>
             </el-row>
           </div>
           <div class="order-detail-order-info">
