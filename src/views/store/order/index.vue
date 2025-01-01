@@ -67,7 +67,7 @@
         </el-table-column>
         <el-table-column show-overflow-tooltip label="用户信息">
           <template slot-scope="scope">
-            {{ scope.row.username }} | {{ scope.row.userID }}
+            {{ scope.row.user.nickname }} | {{ scope.row.user.userID }}
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="amountPay" label="实际支付" />
@@ -211,8 +211,8 @@ export default {
           item.orderID,
           item.orderNumber,
           item.productName,
-          item.userID,
-          item.username,
+          item.user.userID,
+          item.user.nickname,
           item.amountPay,
           payMethodMap[item.orderType],
           item.payTime,
