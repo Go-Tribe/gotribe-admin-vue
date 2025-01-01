@@ -38,11 +38,22 @@
           <el-button :loading="loading" icon="el-icon-search" type="primary" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item>
+          <el-button icon="el-icon-download" type="primary" @click="exportData">导出</el-button>
+        </el-form-item>
+        <el-form-item>
           <el-button :disabled="multipleSelection.length === 0" :loading="loading" icon="el-icon-delete" type="danger" @click="batchDelete">批量删除</el-button>
         </el-form-item>
       </el-form>
 
-      <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        id="order_table"
+        v-loading="loading"
+        :data="tableData"
+        border
+        stripe
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column show-overflow-tooltip prop="orderID" label="ID" width="150" />
         <el-table-column show-overflow-tooltip prop="orderNumber" label="订单号" />
@@ -133,6 +144,7 @@
 import { getOrderList, updateOrder, batchDeleteOrder } from '@/api/store/order'
 import { payMethodMap, orderStatusMap, orderStatusOptions } from '@/constant/order'
 import OrderDetail from './components/order-detail.vue'
+import { exportData } from '@/utils/excel-export'
 
 export default {
   name: 'Order',
@@ -192,6 +204,24 @@ export default {
     this.getTableData()
   },
   methods: {
+    exportData() {
+      const header = ['ID', '订单号', '商品名称', '用户ID', '用户名', '实际支付', '支付方式', '支付时间', '订单状态']
+      const body = this.tableData.map(item => {
+        return [
+          item.orderID,
+          item.orderNumber,
+          item.productName,
+          item.userID,
+          item.username,
+          item.amountPay,
+          payMethodMap[item.orderType],
+          item.payTime,
+          orderStatusMap[item.status]
+        ]
+      })
+      const rows = [header, ...body]
+      exportData(rows, '订单数据')
+    },
     showOrderDetail(orderID) {
       this.$refs.orderDetail.showOrderDetail(orderID)
     },
