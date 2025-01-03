@@ -393,3 +393,18 @@ export function bytesToSize(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
+
+export function setFavicon(iconUrl) {
+  const link = document.querySelector("link[rel~='icon']")
+
+  if (link) {
+    // 如果 <link rel="icon"> 存在，则修改其 href
+    link.href = iconUrl
+  } else {
+    // 如果不存在，则创建一个新的 <link rel="icon"> 标签
+    const newLink = document.createElement('link')
+    newLink.rel = 'icon'
+    newLink.href = iconUrl
+    document.head.appendChild(newLink)
+  }
+}

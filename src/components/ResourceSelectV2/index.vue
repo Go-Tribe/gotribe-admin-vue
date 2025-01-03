@@ -1,8 +1,19 @@
 <template>
-  <div class="image-select">
-    <el-input :placeholder="placeholder" :value="value" @input="inputChange">
-      <template slot="append"><i class="el-icon-folder" @click="showDialog" /></template>
-    </el-input>
+  <div class="resource-select">
+    <div class="resource-select-img-list">
+      <img v-if="value && !multi" class="reource" :src="value" @click="showDialog">
+      <template v-if="value && multi">
+        <img
+          v-for="item in value"
+          :key="item"
+          class="reource"
+          :src="item"
+        >
+      </template>
+      <div v-show="multi || !value" class="resource-select-img-list-add" @click="showDialog">
+        <i class="el-icon-plus" />
+      </div>
+    </div>
     <el-dialog
       title="选择资源"
       :visible.sync="dialogVisible"
@@ -23,17 +34,23 @@
           <el-upload
             action=""
             :before-upload="uploadResource"
-            style="margin-left: 20px;"
+            class="ml-20"
           >
             <el-button icon="el-icon-upload" type="primary">上传</el-button>
           </el-upload>
+          <el-button
+            v-if="multi"
+            class="ml-20"
+            type="primary"
+            @click="finishSelect"
+          >使用选中图片</el-button>
         </div>
         <div class="resource-list">
           <div
             v-for="item in resourceList"
             :key="item.resourceID"
-            class="resource-item"
-            @click="selectResource(item.url+item.path)"
+            :class="['resource-item', item.selected ? 'selected' : '']"
+            @click="selectResource(item)"
           >
             <el-image
               :src="item.url+item.path"
@@ -63,19 +80,19 @@
 import { getResourceList, uploadResource } from '@/api/content/resource'
 import { resourceType } from '@/constant'
 export default {
-  name: 'ResourceSelect',
+  name: 'ResourceSelectV2',
   props: {
     value: {
-      type: String,
+      type: [String, Array],
       default: ''
     },
     modal: {
       type: Boolean,
       default: true
     },
-    placeholder: {
-      type: String,
-      default: '请输入内容'
+    multi: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -130,11 +147,26 @@ export default {
       this.params.pageNum = val
       this.initData()
     },
-    inputChange(value) {
-      this.$emit('input', value)
+    selectResource(item) {
+      if (this.multi) {
+        this.$set(item, 'selected', !item.selected)
+      } else {
+        this.$emit('input', item.url + item.path)
+        this.dialogVisible = false
+      }
     },
-    selectResource(value) {
-      this.$emit('input', value)
+    finishSelect() {
+      const resourceList = this.resourceList
+        .filter(item => item.selected)
+        .map(item => item.url + item.path)
+      if (!resourceList.length) {
+        this.$message({
+          message: '请选择图片',
+          type: 'warning'
+        })
+        return
+      }
+      this.$emit('input', resourceList)
       this.dialogVisible = false
     }
   }
@@ -142,7 +174,30 @@ export default {
 </script>
 
 <style lang="scss">
-.image-select {
+.resource-select {
+  &-img-list {
+    display: inline-flex;
+    gap: 8px;
+    img {
+      height: 80px;
+      width: 80px;
+      border: 1px dashed #d9d9d9;
+      border-radius: 2px;
+    }
+    &-add {
+      border: 1px dashed #d9d9d9;
+      border-radius: 2px;
+      height: 80px;
+      width: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      &:hover {
+        border-color: #409eff;
+      }
+    }
+  }
   .el-input-group__append {
     background: white;
     cursor: pointer;
@@ -179,6 +234,7 @@ export default {
       border-radius: 4px;
       border: 1px solid rgb(232, 228, 228);
       cursor: pointer;
+      overflow: hidden;
       .resource-title {
         white-space: nowrap;
         overflow: hidden;
@@ -188,6 +244,9 @@ export default {
         padding: 4px 8px;
         text-align: center;
       }
+    }
+    .selected {
+      border-color: #689cf9;
     }
   }
 }

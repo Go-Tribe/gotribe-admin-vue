@@ -1,4 +1,6 @@
 import Cookies from 'js-cookie'
+import { getConfig } from '@/api/system/config'
+import { setFavicon } from '@/utils'
 
 const state = {
   sidebar: {
@@ -6,7 +8,12 @@ const state = {
     withoutAnimation: false
   },
   device: 'desktop',
-  size: Cookies.get('size') || 'medium'
+  size: Cookies.get('size') || 'medium',
+  systemConfig: {
+    title: '',
+    logo: '',
+    icon: ''
+  }
 }
 
 const mutations = {
@@ -30,6 +37,9 @@ const mutations = {
   SET_SIZE: (state, size) => {
     state.size = size
     Cookies.set('size', size)
+  },
+  SET_SYSTEM_CONFIG: (state, config) => {
+    state.systemConfig = config
   }
 }
 
@@ -45,6 +55,13 @@ const actions = {
   },
   setSize({ commit }, size) {
     commit('SET_SIZE', size)
+  },
+  getSystemConfig({ commit }) {
+    getConfig().then(res => {
+      const config = res.data.systemConfig || {}
+      setFavicon(config.icon)
+      commit('SET_SYSTEM_CONFIG', config)
+    })
   }
 }
 
