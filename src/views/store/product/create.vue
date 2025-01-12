@@ -30,6 +30,24 @@
               @input="treeselectInput"
             />
           </el-form-item>
+          <el-form-item label="标签" prop="tag">
+            <el-select
+              v-model="basicForm.tag"
+              multiple
+              allow-create
+              filterable
+              default-first-option
+              placeholder="请选择标签"
+              @change="tagChangeHandler"
+            >
+              <el-option
+                v-for="item in optionsMap.tagList"
+                :key="item.tagID"
+                :label="item.title"
+                :value="item.tagID"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="项目" prop="projectID">
             <el-select v-model="basicForm.projectID" class="w-100" placeholder="请选择项目">
               <el-option
@@ -116,6 +134,7 @@ import ResourceSelectV2 from '@/components/ResourceSelectV2'
 import { getCategoryTree } from '@/api/store/product-category'
 import { getProjectList } from '@/api/business/project'
 import { productStatusOptions, productStatusEnum } from '@/constant/store'
+import { getTagList, createTag } from '@/api/content/tag'
 export default {
   name: 'CreateArticle',
   components: {
@@ -199,7 +218,8 @@ export default {
       },
       optionsMap: {
         treeselectData: [],
-        projectList: []
+        projectList: [],
+        tagList: []
       },
       specDetail: []
     }
@@ -208,6 +228,7 @@ export default {
     this.getProductDetail()
     this.getCategoryData()
     this.getProjectData()
+    this.getTagData()
   },
   methods: {
     async getCategoryData() {
@@ -233,7 +254,8 @@ export default {
           if (res.code === 200) {
             this.basicForm = {
               ...res.data.product,
-              sku: res.data.product?.sku?.[0] || {}
+              sku: res.data.product?.sku?.[0] || {},
+              tag: res.data.product.tag ? res.data.product.tag.split(',') : []
             }
           }
         })
@@ -252,7 +274,8 @@ export default {
       const productMethod = this.id ? updateProduct : createProduct
       productMethod({
         ...this.basicForm,
-        sku: [this.basicForm.sku]
+        sku: [this.basicForm.sku],
+        tag: this.basicForm.tag.join(',')
       }).then(res => {
         this.$message({
           message: `${this.id ? '编辑' : '新建'}成功`,
@@ -283,6 +306,28 @@ export default {
     },
     handlePrevClick() {
       this.activeTab = String(Number(this.activeTab) - 1)
+    },
+    tagChangeHandler(value) {
+      if (value.length && !this.optionsMap.tagList.find(item => item.tagID === value[value.length - 1])) {
+        const tag = value[value.length - 1]
+        createTag({ title: tag }).then(res => {
+          this.optionsMap.tagList = [res.data.tag, ...this.optionsMap.tagList]
+          this.basicForm.tag[this.basicForm.tag.length - 1] = res.data.tag.tagID
+        }).catch(() => {
+          this.basicForm.tag.pop()
+          return
+        })
+      }
+    },
+    async getTagData() {
+      const params = {
+        title: '',
+        description: '',
+        pageNum: 1,
+        pageSize: 50
+      }
+      const { data } = await getTagList(params)
+      this.optionsMap.tagList = data.tags
     }
   }
 }
