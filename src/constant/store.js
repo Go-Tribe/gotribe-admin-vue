@@ -41,8 +41,8 @@ export const specItemStatusOptions = [
 ]
 
 export const productStatusEnum = {
-  enable: 1,
-  disable: 2
+  enable: 2,
+  disable: 1
 }
 
 export const productStatusMap = {
