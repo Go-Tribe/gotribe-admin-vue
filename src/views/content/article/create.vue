@@ -21,6 +21,9 @@
         <el-form-item label="封面图" prop="icon">
           <ResourceSelectV2 v-model="basicForm.images" multi />
         </el-form-item>
+        <el-form-item label="视频" prop="video">
+          <ResourceSelectV2 v-model="basicForm.video" :type="2" />
+        </el-form-item>
         <el-form-item label="作者" prop="author">
           <el-select v-model="basicForm.author" placeholder="请选择作者" @change="userChangeHandler">
             <el-option
@@ -169,7 +172,8 @@ export default {
         isPasswd: 0,
         password: '',
         tag: [],
-        columnID: ''
+        columnID: '',
+        video: ''
       },
       basicFormRules: {
         title: [

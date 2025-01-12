@@ -1,14 +1,24 @@
 <template>
   <div class="resource-select">
     <div class="resource-select-img-list">
-      <img v-if="value && !multi" class="reource" :src="value" @click="showDialog">
-      <template v-if="value && multi">
+      <template v-if="type === 1">
         <img
-          v-for="item in value"
-          :key="item"
+          v-if="value && !multi"
           class="reource"
-          :src="item"
+          :src="value"
+          @click="showDialog"
         >
+        <template v-if="value && multi">
+          <img
+            v-for="item in value"
+            :key="item"
+            class="reource"
+            :src="item"
+          >
+        </template>
+      </template>
+      <template v-if="type === 2">
+        <video :src="value" @click="showDialog" />
       </template>
       <div v-show="multi || !value" class="resource-select-img-list-add" @click="showDialog">
         <i class="el-icon-plus" />
@@ -23,7 +33,7 @@
     >
       <div>
         <div class="top-content">
-          <el-select v-model="params.type" @change="initData">
+          <el-select v-model="params.type" disabled @change="initData">
             <el-option
               v-for="item in resourceType"
               :key="item.id"
@@ -53,9 +63,15 @@
             @click="selectResource(item)"
           >
             <el-image
+              v-if="type === 1"
               :src="item.url+item.path"
               style="width: 100%; height: 160px;vertical-align: top;background: #f3f4f6;"
               fit="contain"
+            />
+            <video
+              v-if="type === 2"
+              :src="item.url+item.path"
+              style="width: 100%; height: 160px;"
             />
             <div class="resource-title">{{ item.title }}</div>
           </div>
@@ -93,6 +109,10 @@ export default {
     multi: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -102,7 +122,7 @@ export default {
         description: '',
         pageNum: 1,
         pageSize: 10,
-        type: 0
+        type: this.type
       },
       resourceList: [],
       total: 0,
@@ -178,7 +198,7 @@ export default {
   &-img-list {
     display: inline-flex;
     gap: 8px;
-    img {
+    img, video {
       height: 80px;
       width: 80px;
       border: 1px dashed #d9d9d9;
