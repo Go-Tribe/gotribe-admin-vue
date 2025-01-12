@@ -1,64 +1,64 @@
 <template>
   <div class="login-content" :style="{ backgroundImage: `url(${imgSrc})` }">
+    <div class="top-logo">
+      <img :src="logo" class="site-logo">
+      <div class="site-name">{{ title }}</div>
+    </div>
     <div class="container">
-      <div class="leftbox">
-        <img src="@/assets/images/welcome.png">
-        <h3>{{ title }}</h3>
-        <div class="copyright">
-          © {{ currentYear }}
-          由
-          <a
-            href="https://www.gotribe.cn"
-            target="_blank"
-          >GoTribe</a>
-          &
-          <a
-            href="https://www.mactribe.cn"
-            target="_blank"
-          >微椒网络</a>
-          强力驱动
-        </div>
+      <div class="title-content">
+        <!-- <div class="title">登录</div> -->
+        <img :src="logo" class="site-logo">
+        <div class="site-name">{{ title }}</div>
       </div>
-      <div class="rightbox">
-        <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+        <el-form-item prop="username" class="inputbox">
+          <el-input
+            ref="username"
+            v-model="loginForm.username"
+            placeholder="用户名"
+            name="username"
+            type="text"
+            tabindex="1"
+            autocomplete="on"
+            style="width: 100%;"
+          />
+        </el-form-item>
 
-          <el-form-item prop="username" class="inputbox">
-            <img src="@/assets/images/user.png">
-            <el-input
-              ref="username"
-              v-model="loginForm.username"
-              placeholder="用户名"
-              name="username"
-              type="text"
-              tabindex="1"
-              autocomplete="on"
-            />
-          </el-form-item>
+        <el-form-item prop="password" class="inputbox">
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            placeholder="密码"
+            name="password"
+            tabindex="2"
+            autocomplete="on"
+            style="width: 100%;"
+            @keyup.enter.native="handleLogin"
+          />
+        </el-form-item>
 
-          <el-form-item prop="password" class="inputbox">
-            <img src="@/assets/images/lock.png">
-            <el-input
-              :key="passwordType"
-              ref="password"
-              v-model="loginForm.password"
-              :type="passwordType"
-              placeholder="密码"
-              name="password"
-              tabindex="2"
-              autocomplete="on"
-              @keyup.native="checkCapslock"
-              @blur="capsTooltip = false"
-              @keyup.enter.native="handleLogin"
-            />
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-            </span>
-          </el-form-item>
-
-        </el-form>
-        <button id="my_button" @click="handleLogin">立即登录</button>
-      </div>
-      <div class="clearfix" />
+      </el-form>
+      <el-button
+        type="primary"
+        class="submit-btn"
+        @click="handleLogin"
+      >立即登录</el-button>
+    </div>
+    <div class="copyright">
+      © {{ currentYear }}
+      由
+      <a
+        href="https://www.gotribe.cn"
+        target="_blank"
+      >GoTribe</a>
+      &
+      <a
+        href="https://www.mactribe.cn"
+        target="_blank"
+      >微椒网络</a>
+      强力驱动
     </div>
   </div>
 </template>
@@ -76,27 +76,23 @@ export default {
     ]),
     title() {
       return this.systemConfig.title
+    },
+    logo() {
+      return this.systemConfig.logo
     }
   },
   data() {
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
     return {
       currentYear: '',
-      imgSrc: require('@/assets/backgd-image/backimg.jpg'),
+      imgSrc: require('@/assets/backgd-image/bg.png'),
       loginForm: {
         username: '',
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur' }],
+        username: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
         password: [
-          { required: true, trigger: 'blur', validator: validatePassword }
+          { required: true, trigger: 'blur', message: '请填写密码' }
         ]
       },
       passwordType: 'password',
@@ -197,133 +193,81 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-$bg: #5c646d;
-$light_gray: #fff;
-$cursor: #fff;
-
-/* reset element-ui css */
-.login-content {
-  .el-input {
-    display: inline-block;
-    width: 85%;
-
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-    }
-  }
-
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    color: #454545;
-  }
-
-  .el-form-item__content {
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
-
-<style lang="scss" scoped>
 .login-content {
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .top-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 32px;
+    margin-bottom: 24px;
+    font-size: 24px;
+    font-weight: 600;
+    position: fixed;
+    top: 16px;
+    left: 72px;
+    .site-logo {
+      height: 32px;
+      width: 32px;
+      margin-right: 10px;
+    }
+  }
   .container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -320px;
-    margin-top: -180px;
-    width: 640px;
-    background-color: #fff;
-    z-index: 9;
-    box-shadow: 0px 10px 30px rgba(8, 70, 116, 0.3);
-    .leftbox {
-      background: url('../../assets/images/login-left-bg.jpeg') center center;
-      background-size: cover;
-      float: left;
-      width: 320px;
-      height: 320px;
-      box-sizing: border-box;
-      padding: 30px;
-      img {
-        width: 100px;
-        margin: 60px auto -10px;
-        display: block;
-      }
-      h3 {
-        color: #fff;
-        font-size: 20px;
-        line-height: 60px;
-        text-align: center;
-        margin: 0;
-      }
-      ::v-deep .copyright {
-        font-size: 12px;
-        padding-bottom: 26px;
-        text-align: center;
-        color: #fff;
-        margin-top: 70px;
-        a {
-          color: #dcedff;
-          text-decoration: underline;
-          font-weight: bold;
-          font-size: 12px;
-        }
+    overflow: hidden;
+    width: 560px;
+    background: linear-gradient(180deg, hsla(0, 0%, 100%, .9), hsla(0, 0%, 100%, .75));
+    border: 2px solid #fff;
+    box-shadow: 0 20px 50px rgba(29, 42, 165, .05);
+    -webkit-backdrop-filter: blur(7.5px);
+    backdrop-filter: blur(7.5px);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 64px 80px 34px;
+    .title-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 32px;
+      margin-bottom: 24px;
+      font-size: 24px;
+      font-weight: 600;
+      .site-logo {
+        height: 32px;
+        width: 32px;
+        margin-left: 10px;
+        margin-right: 10px;
       }
     }
-    .rightbox {
-      float: left;
-      width: 320px;
-      height: 320px;
-      box-sizing: border-box;
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      .inputbox {
-        line-height: 40px;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 20px;
-        position: relative;
-        img {
-          height: 20px;
-          vertical-align: middle;
-        }
-        input {
-          outline: none;
-          border: none;
-          font-family: sans-serif;
-          text-indent: 10px;
-          width: 100%;
-        }
-        .show-pwd {
-          position: absolute;
-          right: 10px;
-          top: 2px;
-          font-size: 16px;
-          color: #889aa4;
-          cursor: pointer;
-          user-select: none;
-        }
+    .login-form {
+      width: 100%;
+      margin-top: 32px;
+      .inputbox + .inputbox {
+        margin-top: 32px;
       }
-      #my_button {
-        width: 100%;
-        line-height: 40px;
-        background-color: #34aaff;
-        color: #fff;
-        outline: none;
-        border: none;
-        margin-top: 30px;
-        border-radius: 20px;
-        cursor: pointer;
-      }
+    }
+    .submit-btn {
+      width: 100%;
+      margin-top: 40px;
+    }
+  }
+  .copyright {
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    a {
+      text-decoration: underline;
+      font-weight: bold;
+      font-size: 12px;
     }
   }
 }
