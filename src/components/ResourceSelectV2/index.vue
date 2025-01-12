@@ -18,7 +18,7 @@
         </template>
       </template>
       <template v-if="type === 2">
-        <video :src="value" @click="showDialog" />
+        <video v-if="value" :src="value" @click="showDialog" />
       </template>
       <div v-show="multi || !value" class="resource-select-img-list-add" @click="showDialog">
         <i class="el-icon-plus" />
