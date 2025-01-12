@@ -18,6 +18,12 @@
       </el-form>
 
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%">
+        <el-table-column show-overflow-tooltip prop="id" label="ID" />
+        <el-table-column label="项目">
+          <template slot-scope="scope">
+            <div>{{ scope.row.project && scope.row.project.title }}</div>
+          </template>
+        </el-table-column>
         <el-table-column show-overflow-tooltip prop="title" label="反馈内容" />
         <el-table-column show-overflow-tooltip prop="content" label="反馈详情" />
         <el-table-column show-overflow-tooltip prop="phone" label="联系方式" />
