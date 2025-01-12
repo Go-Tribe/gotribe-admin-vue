@@ -161,7 +161,7 @@ export default {
         content: '',
         htmlContent: '',
         description: '',
-        images: '',
+        images: [],
         author: '',
         type: 1,
         status: 1,
@@ -179,7 +179,7 @@ export default {
         title: [
           { required: true, message: '请输入标题', trigger: 'blur' },
           { min: 2, message: '标题最少为2个字符', trigger: 'blur' },
-          { max: 30, message: '标题最多为30个字符', trigger: 'blur' }
+          { max: 50, message: '标题最多为30个字符', trigger: 'blur' }
         ],
         author: [
           { required: true, message: '请选择作者', trigger: 'blur' }
