@@ -148,7 +148,7 @@
           <el-input v-model.trim="dialogFormData.url" :placeholder="urlTypeMap[dialogFormData.urlType]" />
         </el-form-item>
         <el-form-item label="图片" prop="image">
-          <ResourceSelect v-model="dialogFormData.image" />
+          <ResourceSelect v-model="dialogFormData.image" :modal="false" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="dialogFormData.sort" controls-position="right" :min="1" />

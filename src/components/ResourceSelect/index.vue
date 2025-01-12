@@ -12,7 +12,7 @@
     >
       <div>
         <div class="top-content">
-          <el-select v-model="params.type" @change="initData">
+          <el-select v-model="params.type" disabled @change="initData">
             <el-option
               v-for="item in resourceType"
               :key="item.id"
@@ -85,7 +85,7 @@ export default {
         description: '',
         pageNum: 1,
         pageSize: 10,
-        type: 0
+        type: 1
       },
       resourceList: [],
       total: 0,
