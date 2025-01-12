@@ -39,12 +39,12 @@
         <el-table-column show-overflow-tooltip sortable prop="description" label="描述" />
         <el-table-column label="项目">
           <template slot-scope="scope">
-            <div>{{ scope.row.project.title }}</div>
+            <div>{{ scope.row.project && scope.row.project.title }}</div>
           </template>
         </el-table-column>
         <el-table-column label="分类">
           <template slot-scope="scope">
-            <div>{{ scope.row.category.title }}</div>
+            <div>{{ scope.row.category && scope.row.category.title }}</div>
           </template>
         </el-table-column>
         <el-table-column label="标签">
