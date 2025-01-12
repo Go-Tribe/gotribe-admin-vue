@@ -25,8 +25,9 @@
       <el-table v-loading="loading" :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column sortable prop="configID" label="ID" />
-        <el-table-column show-overflow-tooltip sortable prop="title" label="标题" />
-        <el-table-column show-overflow-tooltip sortable prop="description" label="描述" />
+        <el-table-column show-overflow-tooltip prop="alias" label="别名" />
+        <el-table-column show-overflow-tooltip prop="title" label="标题" />
+        <el-table-column show-overflow-tooltip prop="description" label="描述" />
         <el-table-column fixed="right" label="操作" align="center" width="120">
           <template slot-scope="scope">
             <el-tooltip content="编辑" effect="dark" placement="top">
