@@ -1,10 +1,10 @@
 <template>
-  <el-tabs type="border-card" class="m-10">
-    <el-tab-pane label="推广场景">
-      <Scene />
+  <el-tabs v-model="curTab" type="border-card" class="m-10">
+    <el-tab-pane label="推广场景" name="1">
+      <Scene v-if="curTab === '1'" />
     </el-tab-pane>
-    <el-tab-pane label="推广内容">
-      <Advertise />
+    <el-tab-pane label="推广内容" name="2">
+      <Advertise v-if="curTab === '2'" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -18,6 +18,11 @@ export default {
   components: {
     Scene,
     Advertise
+  },
+  data() {
+    return {
+      curTab: '1'
+    }
   }
 }
 </script>
