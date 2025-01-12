@@ -136,7 +136,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型" prop="urlType">
-          <el-radio-group v-model="dialogFormData.urlType">
+          <el-radio-group v-model="dialogFormData.urlType" @input="dialogFormData.url = ''">
             <el-radio
               v-for="item in urlTypeOptions"
               :key="item.id"
@@ -145,7 +145,37 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="urlTypeMap[dialogFormData.urlType]" prop="url">
-          <el-input v-model.trim="dialogFormData.url" :placeholder="urlTypeMap[dialogFormData.urlType]" />
+          <el-input
+            v-show="dialogFormData.urlType === urlTypeEnum.link"
+            v-model.trim="dialogFormData.url"
+            :placeholder="urlTypeMap[dialogFormData.urlType]"
+          />
+          <el-select
+            v-show="dialogFormData.urlType === urlTypeEnum.article"
+            v-model="dialogFormData.url"
+            :placeholder="urlTypeMap[dialogFormData.urlType]"
+            class="w-100"
+          >
+            <el-option
+              v-for="item in articleList"
+              :key="item.postID"
+              :label="item.title"
+              :value="item.postID"
+            />
+          </el-select>
+          <el-select
+            v-show="dialogFormData.urlType === urlTypeEnum.goods"
+            v-model="dialogFormData.url"
+            :placeholder="urlTypeMap[dialogFormData.urlType]"
+            class="w-100"
+          >
+            <el-option
+              v-for="item in productList"
+              :key="item.productID"
+              :label="item.title"
+              :value="item.productID"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="图片" prop="image">
           <ResourceSelect v-model="dialogFormData.image" :modal="false" />
@@ -173,7 +203,9 @@
 import { getAdList, createAd, updateAd, batchDeleteAd, getSceneList } from '@/api/operation/promotion'
 import { urlTypeOptions, urlTypeMap, publishStatusEnum, urlTypeEnum } from '@/constant'
 import ResourceSelect from '@/components/ResourceSelect'
-import { validateURL } from '@/utils/formValidate'
+// import { validateURL } from '@/utils/formValidate'
+import { getArticleList } from '@/api/content/article'
+import { getProductList } from '@/api/store/product'
 
 export default {
   name: 'Advertise',
@@ -185,6 +217,7 @@ export default {
       urlTypeOptions,
       urlTypeMap,
       publishStatusEnum,
+      urlTypeEnum,
       // 查询参数
       params: {
         pageNum: 1,
@@ -213,7 +246,19 @@ export default {
         sort: 1,
         status: publishStatusEnum.published
       },
-      dialogFormRules: {
+
+      // 删除按钮弹出框
+      popoverVisible: false,
+      // 表格多选
+      multipleSelection: [],
+      sceneList: [],
+      articleList: [],
+      productList: []
+    }
+  },
+  computed: {
+    dialogFormRules() {
+      return {
         title: [
           { required: true, message: '请输入推广内容名称', trigger: 'blur' },
           { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
@@ -225,9 +270,19 @@ export default {
         sceneID: [
           { required: true, message: '请选择推广场景', trigger: 'blur' }
         ],
+        // url: this.dialogFormData.urlType === urlTypeEnum.link ?
+        //   [
+        //     { required: true, message: '请填写链接', trigger: 'blur' },
+        //     { validator: validateURL, message: '请填写正确的链接地址', trigger: 'blur' }
+        //   ] :
+        //   [{
+        //     required: true,
+        //     message: `请选择${this.dialogFormData.urlType === urlTypeEnum.article ? '文章' : '商品'}`,
+        //     trigger: 'blur'
+        //   }]
+        // ,
         url: [
-          { required: true, message: '请填写链接', trigger: 'blur' },
-          { validator: validateURL, message: '请填写正确的链接地址', trigger: 'blur' }
+          { required: true, message: '请填写内容', trigger: 'blur' }
         ],
         urlType: [
           { required: true, message: '请选择类型', trigger: 'blur' }
@@ -241,20 +296,32 @@ export default {
         status: [
           { required: true, message: '请选择发布状态', trigger: 'blur' }
         ]
-      },
-
-      // 删除按钮弹出框
-      popoverVisible: false,
-      // 表格多选
-      multipleSelection: [],
-      sceneList: []
+      }
     }
   },
   created() {
     this.getTableData()
     this.getSceneData()
+    this.getArticleData()
+    this.getProductData()
   },
   methods: {
+    async getArticleData() {
+      const params = {
+        pageNum: 1,
+        pageSize: 200
+      }
+      const { data } = await getArticleList(params)
+      this.articleList = data.posts
+    },
+    async getProductData() {
+      const params = {
+        pageNum: 1,
+        pageSize: 200
+      }
+      const { data } = await getProductList(params)
+      this.productList = data.products
+    },
     async getSceneData() {
       const params = {
         pageNum: 1,
