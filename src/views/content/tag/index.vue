@@ -58,6 +58,9 @@
           <el-form-item label="标签描述" prop="description">
             <el-input v-model.trim="dialogFormData.description" placeholder="标签描述" />
           </el-form-item>
+          <el-form-item label="标签颜色" prop="color">
+            <el-color-picker v-model="dialogFormData.color" />
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button size="mini" @click="cancelForm()">取 消</el-button>
@@ -95,7 +98,8 @@ export default {
       dialogFormVisible: false,
       dialogFormData: {
         title: '',
-        description: ''
+        description: '',
+        color: null
       },
       dialogFormRules: {
         title: [
@@ -147,6 +151,7 @@ export default {
       this.dialogFormData.ID = row.tagID
       this.dialogFormData.title = row.title
       this.dialogFormData.description = row.description
+      this.dialogFormData.color = row.color
 
       this.dialogFormTitle = '修改标签'
       this.dialogType = 'update'
@@ -194,7 +199,8 @@ export default {
       this.$refs['dialogForm'].resetFields()
       this.dialogFormData = {
         title: '',
-        description: ''
+        description: '',
+        color: null
       }
     },
 
