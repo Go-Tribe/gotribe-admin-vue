@@ -26,7 +26,7 @@
             <el-option label="待审核" :value="publishStatusEnum.unPublished" />
           </el-select>
         </el-form-item>
-        <el-form-item label="评论对象类型">
+        <el-form-item label="评论分类">
           <el-select
             v-model="params.objectType"
             placeholder="请选择审核状态"
