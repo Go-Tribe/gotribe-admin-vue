@@ -12,7 +12,7 @@
     >
       <div>
         <div class="top-content">
-          <el-select v-model="params.type" disabled @change="initData">
+          <el-select v-model="params.type" disabled>
             <el-option
               v-for="item in resourceType"
               :key="item.id"
@@ -111,8 +111,10 @@ export default {
       this.dialogVisible = true
       this.initData()
     },
-    initData() {
-      this.params.pageNum = 1
+    initData(resetPageNum = true) {
+      if (resetPageNum) {
+        this.params.pageNum = 1
+      }
       this.resourceList = []
       this.getResourceList()
     },
@@ -132,7 +134,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.params.pageNum = val
-      this.initData()
+      this.initData(false)
     },
     inputChange(value) {
       this.$emit('input', value)
