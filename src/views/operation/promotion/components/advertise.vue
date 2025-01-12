@@ -180,6 +180,9 @@
         <el-form-item label="图片" prop="image">
           <ResourceSelect v-model="dialogFormData.image" :modal="false" />
         </el-form-item>
+        <el-form-item label="视频" prop="video">
+          <ResourceSelect v-model="dialogFormData.video" :type="2" :modal="false" />
+        </el-form-item>
         <el-form-item label="拓展内容" prop="ext">
           <el-input v-model.trim="dialogFormData.ext" type="textarea" placeholder="拓展内容" />
         </el-form-item>
@@ -265,11 +268,11 @@ export default {
       return {
         title: [
           { required: true, message: '请输入推广内容名称', trigger: 'blur' },
-          { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
+          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
         description: [
           { required: true, message: '请输入推广内容描述', trigger: 'blur' },
-          { max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+          { max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
         ],
         sceneID: [
           { required: true, message: '请选择推广场景', trigger: 'blur' }
@@ -291,9 +294,9 @@ export default {
         urlType: [
           { required: true, message: '请选择类型', trigger: 'blur' }
         ],
-        image: [
-          { required: true, message: '请填写图片链接', trigger: 'blur' }
-        ],
+        // image: [
+        //   { required: true, message: '请填写图片链接', trigger: 'blur' }
+        // ],
         sort: [
           { required: true, message: '请填写排序', trigger: 'blur' }
         ],
@@ -434,7 +437,8 @@ export default {
         image: '',
         sort: 1,
         status: publishStatusEnum.published,
-        ext: ''
+        ext: '',
+        video: ''
       }
     },
 
