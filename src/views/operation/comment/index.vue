@@ -46,7 +46,7 @@
         <el-table-column show-overflow-tooltip prop="commentID" label="ID" width="150" />
         <el-table-column show-overflow-tooltip prop="comment" label="评论内容" />
         <el-table-column show-overflow-tooltip prop="nickname" label="评论人" />
-        <el-table-column show-overflow-tooltip prop="objectID" label="子评论ID" />
+        <el-table-column show-overflow-tooltip prop="ip" label="IP" />
         <el-table-column label="发布状态">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 2" type="success">审核通过</el-tag>
