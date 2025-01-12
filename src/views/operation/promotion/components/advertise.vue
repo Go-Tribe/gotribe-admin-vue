@@ -180,6 +180,9 @@
         <el-form-item label="图片" prop="image">
           <ResourceSelect v-model="dialogFormData.image" :modal="false" />
         </el-form-item>
+        <el-form-item label="拓展内容" prop="ext">
+          <el-input v-model.trim="dialogFormData.ext" type="textarea" placeholder="拓展内容" />
+        </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="dialogFormData.sort" controls-position="right" :min="1" />
         </el-form-item>
@@ -244,7 +247,8 @@ export default {
         urlType: urlTypeEnum.link,
         image: '',
         sort: 1,
-        status: publishStatusEnum.published
+        status: publishStatusEnum.published,
+        ext: ''
       },
 
       // 删除按钮弹出框
@@ -429,7 +433,8 @@ export default {
         urlType: urlTypeEnum.link,
         image: '',
         sort: 1,
-        status: publishStatusEnum.published
+        status: publishStatusEnum.published,
+        ext: ''
       }
     },
 
