@@ -76,6 +76,10 @@ export default {
     placeholder: {
       type: String,
       default: '请输入内容'
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -85,7 +89,7 @@ export default {
         description: '',
         pageNum: 1,
         pageSize: 10,
-        type: 1
+        type: this.type
       },
       resourceList: [],
       total: 0,
