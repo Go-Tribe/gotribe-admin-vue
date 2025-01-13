@@ -10,6 +10,7 @@
       <el-tabs v-model="activeTab">
         <el-tab-pane label="基本信息" disabled name="1" />
         <el-tab-pane label="文章详情" disabled name="2" />
+        <el-tab-pane label="其他信息" disabled name="3" />
       </el-tabs>
       <el-form v-if="activeTab === '1'" ref="basicForm" :rules="basicFormRules" :model="basicForm" label-width="70px">
         <el-form-item label="标题" prop="title">
@@ -108,6 +109,23 @@
         </el-form-item>
       </el-form>
       <MdEditor v-if="(!id || basicForm.content) && activeTab === '2'" ref="mdEditor" class="article-editor" :md-content="basicForm.content" />
+      <el-form v-if="activeTab === '3'" label-width="70px">
+        <el-form-item label="商品价格" prop="unitPrice">
+          <el-input v-model.number="basicForm.unitPrice" type="number" />
+        </el-form-item>
+        <el-form-item label="时间">
+          <el-input v-model="basicForm.time" />
+        </el-form-item>
+        <el-form-item label="地点">
+          <el-input v-model="basicForm.location" />
+        </el-form-item>
+        <el-form-item label="人物">
+          <el-input v-model="basicForm.people" />
+        </el-form-item>
+        <el-form-item label="拓展字段">
+          <el-input v-model="basicForm.ext" />
+        </el-form-item>
+      </el-form>
       <div class="operate-btn">
         <el-button
           v-show="activeTab !== '1'"
@@ -115,12 +133,12 @@
           @click="handlePrevClick"
         >上一步</el-button>
         <el-button
-          v-show="activeTab !== '2'"
+          v-show="activeTab !== '3'"
           type="primary"
           @click="handleNextClick"
         >下一步</el-button>
         <el-button
-          v-show="activeTab === '2'"
+          v-show="activeTab === '3'"
           type="primary"
           @click="submit"
         >提交</el-button>
@@ -173,7 +191,12 @@ export default {
         password: '',
         tag: [],
         columnID: '',
-        video: ''
+        video: '',
+        unitPrice: 0,
+        location: '',
+        people: '',
+        time: '',
+        ext: ''
       },
       basicFormRules: {
         title: [
@@ -316,15 +339,6 @@ export default {
       }
     },
     submit() {
-      this.basicForm.content = this.$refs.mdEditor.getMarkdown()
-      this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
-      if (!this.basicForm.content) {
-        this.$message({
-          message: '请填写文章内容',
-          type: 'warning'
-        })
-        return
-      }
       const articleMethod = this.id ? updateArticle : createArticle
       articleMethod({
         ...this.basicForm,
@@ -363,11 +377,24 @@ export default {
       }
     },
     handleNextClick() {
-      this.$refs['basicForm'].validate(valid => {
-        if (valid) {
-          this.activeTab = String(Number(this.activeTab) + 1)
+      if (this.activeTab === '2') {
+        this.basicForm.content = this.$refs.mdEditor.getMarkdown()
+        this.basicForm.htmlContent = this.$refs.mdEditor.getHtml()
+        if (!this.basicForm.content) {
+          this.$message({
+            message: '请填写文章内容',
+            type: 'warning'
+          })
+          return
         }
-      })
+        this.activeTab = String(Number(this.activeTab) + 1)
+      } else {
+        this.$refs['basicForm'].validate(valid => {
+          if (valid) {
+            this.activeTab = String(Number(this.activeTab) + 1)
+          }
+        })
+      }
     },
     handlePrevClick() {
       this.activeTab = String(Number(this.activeTab) - 1)
