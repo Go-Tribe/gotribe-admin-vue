@@ -73,7 +73,7 @@
         <el-table-column show-overflow-tooltip prop="amountPay" label="实际支付" />
         <el-table-column show-overflow-tooltip label="支付方式">
           <template slot-scope="scope">
-            <div>{{ payMethodMap[scope.row.orderType] }}</div>
+            <div>{{ payMethodMap[scope.row.payMethod] }}</div>
           </template>
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="payTime" label="支付时间" />
@@ -214,7 +214,7 @@ export default {
           item.user.userID,
           item.user.nickname,
           item.amountPay,
-          payMethodMap[item.orderType],
+          payMethodMap[item.payMethod],
           item.payTime,
           orderStatusMap[item.status]
         ]
