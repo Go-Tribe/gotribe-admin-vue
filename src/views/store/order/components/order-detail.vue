@@ -56,7 +56,7 @@
             </el-row>
           </div>
           <div class="order-detail-order-info">
-            <div class="order-detail-order-info-title">订单信息信息</div>
+            <div class="order-detail-order-info-title">订单信息</div>
             <el-row class="mt-16">
               <el-col :span="8">
                 <span class="order-detail-order-info-text">创建时间：{{ orderDetail.createdAt }}</span>
@@ -71,6 +71,17 @@
             <el-row class="mt-16">
               <el-col :span="8">
                 <span class="order-detail-order-info-text">实际支付：{{ orderDetail.amountPay }}</span>
+              </el-col>
+            </el-row>
+          </div>
+          <div class="order-detail-order-info">
+            <div class="order-detail-order-info-title">物流信息</div>
+            <el-row class="mt-16">
+              <el-col :span="8">
+                <span class="order-detail-order-info-text">物流公司：{{ orderDetail.logisticsCompany }}</span>
+              </el-col>
+              <el-col :span="8">
+                <span class="order-detail-order-info-text">物流单号：{{ orderDetail.logisticsNumber }}</span>
               </el-col>
             </el-row>
           </div>
