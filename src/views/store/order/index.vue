@@ -82,8 +82,11 @@
             <div>{{ orderStatusMap[scope.row.status] }}</div>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" align="center" width="180">
+        <el-table-column fixed="right" label="操作" align="center" width="240">
           <template slot-scope="scope">
+            <el-tooltip content="发货" effect="dark" placement="top">
+              <el-button v-if="scope.row.status === 2" size="mini" icon="el-icon-s-shop" circle type="primary" @click="showDeliverDialog(scope.row.orderID)" />
+            </el-tooltip>
             <el-tooltip content="查看详情" effect="dark" placement="top">
               <el-button size="mini" icon="el-icon-view" circle type="primary" @click="showOrderDetail(scope.row.orderID)" />
             </el-tooltip>
@@ -135,13 +138,28 @@
           <el-button size="mini" :loading="submitLoading" type="primary" @click="submitForm()">确 定</el-button>
         </div>
       </el-dialog>
+
+      <el-dialog title="发货" :visible.sync="deliverDialogVisible" @close="resetDeliverForm">
+        <el-form ref="deliverForm" size="small" :model="deliverFormData" :rules="deliverFormRules" label-width="120px">
+          <el-form-item label="物流公司" prop="company">
+            <el-input v-model="deliverFormData.company" placeholder="物流公司" />
+          </el-form-item>
+          <el-form-item label="物流单号" prop="number">
+            <el-input v-model="deliverFormData.number" placeholder="物流单号" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="resetDeliverForm()">取 消</el-button>
+          <el-button size="mini" :loading="submitLoading" type="primary" @click="submitDeliverForm()">确 定</el-button>
+        </div>
+      </el-dialog>
       <OrderDetail ref="orderDetail" />
     </el-card>
   </div>
 </template>
 
 <script>
-import { getOrderList, updateOrder, batchDeleteOrder } from '@/api/store/order'
+import { getOrderList, updateOrder, batchDeleteOrder, updateOrderLogsitics } from '@/api/store/order'
 import { payMethodMap, orderStatusMap, orderStatusOptions } from '@/constant/order'
 import OrderDetail from './components/order-detail.vue'
 import { exportData } from '@/utils/excel-export'
@@ -197,7 +215,21 @@ export default {
       // 删除按钮弹出框
       popoverVisible: false,
       // 表格多选
-      multipleSelection: []
+      multipleSelection: [],
+      deliverDialogVisible: false,
+      deliverFormData: {
+        company: '',
+        number: '',
+        orderID: ''
+      },
+      deliverFormRules: {
+        company: [
+          { required: true, message: '请填写物流公司', trigger: 'blur' }
+        ],
+        number: [
+          { required: true, message: '请填写物流单号', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -302,6 +334,47 @@ export default {
         remarkAdmin: null,
         status: ''
       }
+    },
+
+    showDeliverDialog(orderID) {
+      this.deliverDialogVisible = true
+      this.deliverFormData.orderID = orderID
+    },
+
+    resetDeliverForm() {
+      this.deliverDialogVisible = false
+      this.deliverFormData = {
+        company: '',
+        number: '',
+        orderID: ''
+      }
+    },
+
+    submitDeliverForm() {
+      this.$refs['deliverForm'].validate(async valid => {
+        if (valid) {
+          let msg = ''
+          this.submitLoading = true
+          try {
+            const params = this.deliverFormData
+
+            const { message } = await updateOrderLogsitics(params)
+            msg = message
+          } finally {
+            this.submitLoading = false
+          }
+
+          this.resetDeliverForm()
+          this.getTableData()
+          this.$message({
+            showClose: true,
+            message: msg,
+            type: 'success'
+          })
+        } else {
+          return false
+        }
+      })
     },
 
     // 批量删除

@@ -38,3 +38,11 @@ export function getOrderLog(orderID) {
   })
 }
 
+export function updateOrderLogsitics(data) {
+  return request({
+    url: '/api/order/logistics/' + data.orderID,
+    method: 'patch',
+    data
+  })
+}
+
