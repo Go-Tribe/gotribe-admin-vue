@@ -24,13 +24,21 @@
         </el-card>
       </el-col>
     </el-row>
+    <OrderChart />
+    <UserChart />
   </div>
 </template>
 
 <script>
+import OrderChart from './components/orderChart.vue'
+import UserChart from './components/userChart.vue'
 
 export default {
   name: 'Dashboard',
+  components: {
+    OrderChart,
+    UserChart
+  },
   data() {
     return {
       infoList: [
