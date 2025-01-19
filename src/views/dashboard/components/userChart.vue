@@ -17,29 +17,19 @@ import * as echarts from 'echarts'
 
 export default {
   name: 'UserChart',
+  props: {
+    userList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       userOption: {
         grid: { left: 0, top: 40, bottom: 20, right: 10, containLabel: true },
         xAxis: {
           type: 'category',
-          data: [
-            '12-26',
-            '12-27',
-            '12-28',
-            '12-29',
-            '12-30',
-            '12-31',
-            '01-01',
-            '01-02',
-            '01-03',
-            '01-04',
-            '01-05',
-            '01-06',
-            '01-07',
-            '01-08',
-            '01-09'
-          ],
+          data: [],
           axisLine: { lineStyle: { color: '#ccc' }},
           axisTick: { length: 3 },
           axisLabel: { color: '#999', rotate: 45 }
@@ -60,7 +50,7 @@ export default {
           {
             name: '用户',
             type: 'line',
-            data: [0, 10, 2, 4, 4, 7, 0, 0, 0, 3, 0, 9, 6, 0, 0],
+            data: [],
             smooth: true, // 平滑曲线
             showSymbol: false,
             itemStyle: { color: '#126EFC' },
@@ -69,15 +59,13 @@ export default {
           }
         ]
       }
-
     }
   },
-  mounted() {
-    this.initOrderChart()
-  },
   methods: {
-    initOrderChart() {
+    initUserChart() {
       this.userChart = echarts.init(document.querySelector('.user-chart'))
+      this.userOption.xAxis.data = this.userList.map(item => item.date)
+      this.userOption.series[0].data = this.userList.map(item => item.totalUsers)
       this.userChart.setOption(this.userOption)
       window.addEventListener('resize', () => {
         this.userChart.resize()

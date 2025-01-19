@@ -7,8 +7,7 @@
         </div>
         <h4>订单</h4>
       </div>
-      <el-radio-group v-model="orderRange">
-        <el-radio-button label="30days">30天</el-radio-button>
+      <el-radio-group v-model="timeRange" @input="timeChange">
         <el-radio-button label="week">周</el-radio-button>
         <el-radio-button label="month">月</el-radio-button>
         <el-radio-button label="year">年</el-radio-button>
@@ -23,12 +22,15 @@ import * as echarts from 'echarts'
 
 export default {
   name: 'OrderChart',
+  props: {
+    orderList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      orderRange: '30days',
-      orderNumList: [100, 200, 300, 200, 100, 400],
-      orderMoneyList: [200, 300, 400, 300, 200, 500],
-      orderXName: ['1', '2', '3', '4', '5', '6'],
+      timeRange: 'week',
       orderOption: {
         backgroundColor: '#fff',
         grid: { left: 0, top: 40, bottom: 20, right: 10, containLabel: true },
@@ -107,15 +109,15 @@ export default {
       }
     }
   },
-  mounted() {
-    this.initOrderChart()
-  },
   methods: {
+    timeChange(value) {
+      this.$emit('timeChange', value)
+    },
     initOrderChart() {
       this.orderChart = echarts.init(document.querySelector('.order-chart'))
-      this.orderOption.xAxis.data = this.orderXName
-      this.orderOption.series[0].data = this.orderMoneyList
-      this.orderOption.series[1].data = this.orderNumList
+      this.orderOption.xAxis.data = this.orderList.map(item => item.date)
+      this.orderOption.series[0].data = this.orderList.map(item => item.totalSales)
+      this.orderOption.series[1].data = this.orderList.map(item => item.totalOrders)
       this.orderChart.setOption(this.orderOption)
       window.addEventListener('resize', () => {
         this.orderChart.resize()

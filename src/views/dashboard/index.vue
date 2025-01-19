@@ -1,5 +1,16 @@
 <template>
   <div class="dashboard-container">
+    <el-card style="margin: 0 10px 10px;">
+      项目：
+      <el-select v-model="projectID" placeholder="项目" @change="initData">
+        <el-option
+          v-for="item in projectList"
+          :key="item.projectID"
+          :label="item.title"
+          :value="item.projectID"
+        />
+      </el-select>
+    </el-card>
     <el-row>
       <el-col v-for="item in infoList" :key="item.name" :span="6" style="padding: 0 10px;">
         <el-card shadow="always" class="info-card">
@@ -24,14 +35,16 @@
         </el-card>
       </el-col>
     </el-row>
-    <OrderChart />
-    <UserChart />
+    <OrderChart ref="orderChart" :order-list="orderList" @timeChange="timeChange" />
+    <UserChart ref="userChart" :user-list="userList" />
   </div>
 </template>
 
 <script>
 import OrderChart from './components/orderChart.vue'
 import UserChart from './components/userChart.vue'
+import { getIndex, getIndexData } from '@/api/index/index'
+import { getProjectList } from '@/api/business/project'
 
 export default {
   name: 'Dashboard',
@@ -51,7 +64,7 @@ export default {
           value: 2
         },
         {
-          name: '用户数',
+          name: '浏览量',
           value: 2
         },
         {
@@ -96,7 +109,61 @@ export default {
           url: '/operation/comment',
           color: 'rgb(255, 156, 110)'
         }
-      ]
+      ],
+      projectList: [],
+      projectID: '',
+      timeRange: 'week',
+      orderList: [],
+      userList: [{ date: 2, totalUsers: 9 }]
+    }
+  },
+  async mounted() {
+    await this.getProjectData()
+    this.initData()
+  },
+  methods: {
+    timeChange(value) {
+      this.timeRange = value
+      this.getIndexData()
+    },
+    initData() {
+      this.getIndex()
+      this.getIndexData()
+    },
+    getIndex() {
+      getIndex({
+        projectID: this.projectID
+      }).then(res => {
+        const { indexDate } = res.data
+        this.infoList[0].value = indexDate.sales
+        this.infoList[1].value = indexDate.orders
+        this.infoList[2].value = indexDate.visitCount
+        this.infoList[3].value = indexDate.newUsers
+      })
+    },
+    getIndexData() {
+      getIndexData({
+        projectID: this.projectID,
+        timeRange: this.timeRange
+      }).then(res => {
+        this.userList = res.data.timeRangeData.users
+        this.orderList = res.data.timeRangeData.orders
+        this.$nextTick(() => {
+          this.$refs.userChart.initUserChart()
+          this.$refs.orderChart.initOrderChart()
+        })
+      })
+    },
+    async getProjectData() {
+      const params = {
+        title: '',
+        description: '',
+        pageNum: 1,
+        pageSize: 50
+      }
+      const { data } = await getProjectList(params)
+      this.projectList = data.projects
+      this.projectID = data.projects[0]?.projectID
     }
   }
 }
