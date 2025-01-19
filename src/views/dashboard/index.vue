@@ -57,19 +57,19 @@ export default {
       infoList: [
         {
           name: '销售额',
-          value: 2
+          value: 0
         },
         {
           name: '订单量',
-          value: 2
+          value: 0
         },
         {
           name: '浏览量',
-          value: 2
+          value: 0
         },
         {
           name: '新增用户',
-          value: 2
+          value: 0
         }
       ],
       operateList: [
