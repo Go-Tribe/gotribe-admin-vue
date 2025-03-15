@@ -80,7 +80,7 @@
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
-          <el-form-item label="角色" prop="roleIds">
+          <el-form-item label="角色" prop="roleIds" required>
             <el-select v-model.trim="dialogFormData.roleIds" multiple placeholder="请选择角色" style="width:100%">
               <el-option
                 v-for="item in roles"
@@ -198,6 +198,9 @@ export default {
         introduction: [
           { required: false, message: '说明', trigger: 'blur' },
           { min: 0, max: 100, message: '长度在 0 到 100 个字符', trigger: 'blur' }
+        ],
+        roleIds: [
+          { required: true, message: '请选择角色', trigger: 'change' }
         ]
       },
 
